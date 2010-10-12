@@ -1,0 +1,22 @@
+## Interface: 30300
+## X-Compatible-With: 40000
+## Title: StarVisuals
+## Notes: Visualizations from outerspace
+## Author: Starlon
+## Version: 1.0
+## X-StarTip-Version: @project-version@
+## OptionalDeps: Ace3, LibScriptableDisplay-1.0
+## SavedVariables: StarVisualsDB
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+
+embeds.xml
+
+Localization\enUS.lua
+
+StarVisuals.lua
+
+modules.xml
+
+
