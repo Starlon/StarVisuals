@@ -4,7 +4,7 @@ local LibDBIcon = LibStub("LibDBIcon-1.0")
 local LSM = _G.LibStub("LibSharedMedia-3.0")
 local LDB = LibStub:GetLibrary("LibDataBroker-1.1")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
---local L = LibStub("AceLocale-3.0"):GetLocale("StarVisuals")
+local L = LibStub("AceLocale-3.0"):GetLocale("StarVisuals")
 StarVisuals.L = L
 
 local LibCore = LibStub("LibScriptableDisplayCore-1.0")
@@ -173,7 +173,7 @@ function StarVisuals:OnInitialize()
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("StarVisuals-Addon", options)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("StarVisuals", menuoptions)
 	AceConfigDialog:SetDefaultSize("StarVisuals-Addon", 800, 450)
-	self:RegisterChatCommand("startip", "OpenConfig")
+	self:RegisterChatCommand("starvisuals", "OpenConfig")
 	AceConfigDialog:AddToBlizOptions("StarVisuals")
 	LibDBIcon:Register("StarVisualsLDB", LDB, self.db.profile.minimap)
 
