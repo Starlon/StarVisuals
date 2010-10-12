@@ -1,0 +1,127 @@
+******************************
+*                            *
+*  SUPERSCOPES-3D by EL-VIS  *
+*                            *
+******************************
+
+First: "Yes, I'm not a native speaker!"
+Second: "But I've tried my best."
+
+The idea was to do some Superscopes in 3D. My first tries (_first3D_) were quite OK
+but not the real thing. So I got deeper into 3D-mathematics and I finally managed 
+to develop a base setup for real 3D presets (_real3D_start.avs). 
+
+
+Real 3D means:
+
+Every point of the scope has now 3 coordinates: x1, y1 and z1 
+(instead of x and y) which describe its position in the 3D-Room:
+ 
+ 
+
+           -y
+            |  +z
+            |  /
+            | /
+            |/
+-x ------------------- +x
+           /|0
+          / |
+         /  |
+       -z   |
+           +y
+
+
+So the scope becomes a real 3D-Object, which could be rotated around and
+moved along the three axes (x,y and z) of the 3D-Room. 
+
+Finally the 3D-coordinates of the scope are translated into 2D-coordinates of the screen.
+
+Here's the explanation of the settings of real3D_start.avs by section:
+
+INIT_______________________________________________________________________________
+
+n=7; r=0.5; 
+Just for this scope, which is a simple circle with a radius of 0.5 done in 7 steps.
+
+mx=0;my=0;mz=0;
+Use these to move the center/base of your scope along the axes.
+
+dst=2;
+Normally you don't need to change this. It's the distance for the 3D/2D-Translation.
+IMPORTANT: If you create, rotate or move a scope its z-values must not become lower 
+than -dst => !!! z >= -dst for all z !!! 
+  
+rx=0;ry=0;rz=0;
+Initrotation around x,y and z-axis in degrees.
+
+rdx=1;rdy=1;rdz=1;
+Permanent rotation around axes in degrees/frame. Set these to zero to
+stop rotation.
+
+p=3.14159265;p2=2.0*p;p3=180/p
+You'll never need to change these
+
+
+
+POINT______________________________________________________________________________
+
+x1=r*sin(p2*i);y1=0;z1=r*cos(p2*i);
+This is the 3D-Scope. Add your own scopes here by setting x1,y1 and z1. 
+(Do not use x and y. They are generated in this section)
+
+(In fact the example is not really 3D because of y1=0, but as you see,
+it can be nicely rotated anyway) 
+
+IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+The length of input in all of the sections is limited. So keep your scope as
+short as possible. If the scope suddenly dissapears after a regular input you're
+F***ed!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Do not change anything else in this section:
+
+y2=y1*xc-z1*xs;z2=y1*xs+z1*xc;
+Rotation around x-axis
+
+x2=z2*ys+x1*yc;z3=z2*yc-x1*ys;
+Rotation around y-axis
+
+x3=x2*zc-y2*zs;y3=y2*zc+x2*zs;
+Rotation around z-axis
+
+x4=mx+x3;y4=my+y3;z4=mz+z3;
+Movement of center/base
+
+x=x4/(1+z4/dst);y=y4/(1+z4/dst);
+3D/2D-Translation
+
+FRAME______________________________________________________________________________
+
+This is a good place to setup additional movement for your scope. For Example:
+fr=fr+0.01;mz=1+sin(fr)
+will move the scope back and forward along the z-axis.
+
+Do not change these and add your input in front of them:
+
+rx=rx+rdx;ry=ry+rdy;rz=rz+rdz;
+Rotation per Frame
+
+xs=sin(rx/p3);ys=sin(ry/p3);zs=sin(rz/p3);xc=cos(rx/p3);yc=cos(ry/p3);zc=cos(rz/p3)
+Sinuses and cosinuses for rotation in point-section (to save space and increase
+performance).
+
+
+BEAT_______________________________________________________________________________
+
+
+Setup the beat reaction of your scope. For example change the rotation speed by random
+like this:
+
+rdx=rand(3)+1;rdy=rand(3)+1;rdz=rand(3)+1
+
+
+___________________________________________________________________________________
+
+THAT'S ALL FOLKS !
+
