@@ -1,5 +1,5 @@
 local mod = StarVisuals:NewModule("Images")
-mod.name = "IMages"
+mod.name = "Images"
 mod.toggled = true
 mod.defaultOff = true
 local LibBuffer = LibStub("LibScriptableDisplayBuffer-1.0")
@@ -15,24 +15,15 @@ local UIParent = _G.UIParent
 local textures = {[0] = "Interface\\Addons\\StarVisuals\\Media\\black.blp", [1] = "Interface\\Addons\\StarVisuals\\Media\\white.blp"}
 local environment = {}
 local draw
---[[
-local frame = CreateFrame("Frame")
-frame:SetParent(UIParent)
-frame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-	tile = true,
-	tileSize = 4,
-	edgeSize=4, 
-	insets = { left = 0, right = 0, top = 0, bottom = 0}})
-frame:ClearAllPoints()
-frame:SetAlpha(1)
-frame:SetWidth(500)
-frame:SetHeight(500)
-frame:SetPoint("CENTER", UIParent, "CENTER")
-frame:Show()
-]]
 
-local options = {
-}
+local function copy(tbl)
+	if type(tbl) ~= "table" then return tbl end
+	local new = {}
+	for k, v in pairs(tbl) do
+		new[k] = copy(v)
+	end
+	return new
+end
 
 local foo = 200
 local defaults = {
@@ -43,12 +34,16 @@ local defaults = {
 		xres = 7,
 		size = 15,
 		update = 500,
-		images = {
-			[1] = {
-				name = "Analyzer",
-				prescript = [[
+		images = nil
+	}
+}
+
+local defaultWidgets = {
+	[1] = {
+		name = "Analyzer",
+		prescript = [[
 ]],
-				script = [[
+		script = [[
 self:Clear()
 y_old = floor(self.height / 2);
 for i = 0, self.width - 1 do
@@ -66,16 +61,48 @@ for i = 0, self.width - 1 do
 end
 
 ]],
-				update = 100,
-				width = 64,
-				height = 64,
-				pixel = 4,
-				--drawLayer = "UIParent",
-				enabled = true,
-				points = {{"CENTER", "UIParent", "CENTER"}},
-			}
-		}
+		update = 100,
+		width = 64,
+		height = 64,
+		pixel = 4,
+		--drawLayer = "UIParent",
+		enabled = true,
+		points = {{"CENTER", "UIParent", "CENTER"}},
 	}
+}
+
+defaults.profile.images = copy(defaultWidgets)
+
+local options = {}
+local optionsDefaults = {
+	add = {
+		name = "Add Image",
+		desc = "Add an image widget",
+		type = "input",
+		set = function(info, v)
+			local widget = {
+				name = v,
+				height = WidgetImage.defaults.height,
+				width = WidgetImage.defaults.width,
+				enabled = true,
+				points = {{"CENTER"}},
+			}
+			tinsert(mod.db.profile.images, widget)
+			StarVisuals:RebuildOpts()
+
+		end,
+		order = 5
+	},
+	defaults = {
+		name = "Restore Defaults",
+		desc = "Restore Defaults",
+		type = "execute",
+		func = function()
+			mod.db.profile.images = copy(defaultWidgets);
+			StarTip:RebuildOpts()
+		end,
+		order = 6
+	},
 }
 
 function mod:OnInitialize()
@@ -170,35 +197,35 @@ function mod:OnDisable()
 	end
 end
 
-function mod:GetOptionsbleh()
-	for i, image in ipairs(self.db.profile.images) do
-		options.images.args["Icon"..i] = {
-			enabled = {
-				name = "Enabled",
-				type = "toggle",
-				get = function() return image.enabled end,
-				set = function(info, val) image.enabled = val end,
-				order = 1
-			},
-			speed = {
-				name = "Speed",
-				type = "input",
-				pattern = "%d",
-				get = function() return image.speed end,
-				set = function(info, val) image.speed = val end,
-				order = 2
-			},
-			bitmap = {
-				name = "Bitmap",
-				type = "input",
-				multiline = true,
-				width = "full",
-				get = function() return image.bitmap end,
-				set = function(info, val) image.bitmap = val end,
-				order = 3
-			}
+function mod:RebuildOpts()
+	local defaults = WidgetImage.defaults
+	self:ClearImages()
+	wipe(options)
+	for k, v in pairs(optionsDefaults) do
+		options[k] = v
+	end
+	for i, db in ipairs(self.db.profile.images) do
+		options[db.name:gsub(" ", "_")] = {
+			name = db.name,
+			type="group",
+			order = i,
+			args=WidgetImage:GetOptions(db, StarVisuals.RebuildOpts, StarVisuals)
+		}
+		options[db.name:gsub(" ", "_")].args.delete = {
+			name = "Delete",
+			desc = "Delete this widget",
+			type = "execute",
+			func = function()
+				self.db.profile.images[i] = nil
+				self:ClearImages()
+				StarVisuals:RebuildOpts()
+			end,
+			order = 13
 		}
 	end
+end
+
+function mod:GetOptions()
 	return options
 end
 
