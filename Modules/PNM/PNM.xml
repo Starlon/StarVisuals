@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-<Script file = "Modules\Images\Images.lua"/>
-<Script file = "Modules\AVS\AVS.lua"/>
-<Include file = "Modules\PNM\PNM.xml"/>
+<Script file = "PNMImages\Rays.lua"/>
+<Script file = "PNMImages\Snail.lua"/>
+<Script file = "PNM.lua"/>
 
 </Ui>

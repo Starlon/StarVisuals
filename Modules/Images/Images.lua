@@ -62,9 +62,9 @@ end
 
 ]],
 		update = 100,
-		width = 64,
-		height = 64,
-		pixel = 4,
+		width = 200,
+		height = 200,
+		pixel = 1,
 		--drawLayer = "UIParent",
 		enabled = true,
 		points = {{"CENTER", "UIParent", "CENTER"}},
@@ -237,13 +237,27 @@ do return end
 	wipe(mod.images)
 end
 
-function draw(widget)	
+function draw(widget)
+
+	local size = 64
+	widget.noise = widget.noise or LibBuffer:New("widget.noise", size, 0)
+	
+	for i = 0, size - 1 do
+		widget.noise.buffer[i] = random(100) / 100
+	end
+	
+	widget.environment.noise = widget.environment.noise or {}
+	
+	local noise = widget.noise:MovingAverageExp(0.2)
+	
+	for i = 0, noise:Size() - 1 do
+		widget.environment.noise[i] = noise.buffer[i]
+	end
+			
+	noise:Del()
+	
 	for n = 0, widget.height * widget.width - 1 do
 		local color = widget.image[widget.index].buffer[n]
-		if random(2) == 1 or true then
-			widget.textures[n]:SetVertexColor(PluginColor.Color2RGBA(color, true))
-		else
-			widget.textures[n]:SetVertexColor(1, 1, 1, 1)
-		end
+		widget.textures[n]:SetVertexColor(PluginColor.Color2RGBA(color, true))
 	end
 end

@@ -1,5 +1,4 @@
-## Interface: 30300
-## X-Compatible-With: 40000
+## Interface: 40300
 ## Title: StarVisuals
 ## Notes: Visualizations from outerspace
 ## Author: Starlon
