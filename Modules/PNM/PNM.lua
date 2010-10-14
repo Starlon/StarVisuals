@@ -130,12 +130,11 @@ local co = coroutine.create(function()
 						image.textures[n]:SetVertexColor(red, green, blue)
 					end					
 				end
-				coroutine.yield(false)
+				coroutine.yield()
 			end
 			image.canvas = frame
 			tinsert(mod.images, image)
 		end
-		coroutine.yield(true)
 	end
 end)
 
@@ -163,33 +162,12 @@ function mod:OnDisable()
 	wipe(self.images)
 end
 
-function mod:GetOptionsbleh()
+function mod:GetOptions()
 	for i, image in ipairs(self.db.profile.images) do
-		options.images.args["Icon"..i] = {
-			enabled = {
-				name = "Enabled",
-				type = "toggle",
-				get = function() return image.enabled end,
-				set = function(info, val) image.enabled = val end,
-				order = 1
-			},
-			speed = {
-				name = "Speed",
-				type = "input",
-				pattern = "%d",
-				get = function() return image.speed end,
-				set = function(info, val) image.speed = val end,
-				order = 2
-			},
-			bitmap = {
-				name = "Bitmap",
-				type = "input",
-				multiline = true,
-				width = "full",
-				get = function() return image.bitmap end,
-				set = function(info, val) image.bitmap = val end,
-				order = 3
-			}
+		options.images.args["PNM"..i] = {
+			name = image.name,
+			type = "group",
+			args = LibPNM:GetOptions(image, StarVisuals.RebuildOpts, StarVisuals)
 		}
 	end
 	return options
@@ -204,27 +182,4 @@ do return end
 end
 
 function update()
-	for i, pnm in ipairs(mod.images or {}) do
-		if pnm.bitmap then
-		elseif pnm.grayimage then
-			for n = 0, pnm.h * pnm.w - 1 do
-				local color = 0
-				blue = pnm.grayimage[n] / 100 * pnm.n
-				green = bit.lshift(pnm.grayimage[n] / 100 * pnm.n, 8)
-				red = bit.lshift(pnm.grayimage[n] / 100 * pnm.n, 16)
-				local color = bit.bor(blue, bit.bor(green, red))
-				pnm.textures[n]:SetVertexColor(PluginColor.Color2RGBA(color))
-			end
-		elseif pnm.colorimage then
-			for n = 0, pnm.h * pnm.w - 1 do
-				local red, green, blue = PluginColor.Color2RGBA(pnm.colorimage[n])
-				pnm.textures[n]:SetVertexColor(red, green, blue)
-			end		
-		end
-		--[[
-		for n = 0, widget.height * widget.width - 1 do
-			local color = widget.buffer.buffer[n]
-			widget.textures[n]:SetVertexColor(PluginColor.Color2RGBA(color))
-		end]]
-	end
 end
