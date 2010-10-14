@@ -3,6 +3,8 @@
 
 <Script file = "PNMImages\Rays.lua"/>
 <Script file = "PNMImages\Snail.lua"/>
+<Script file = "PNMImages\Tiger.lua"/>
+<Script file = "PNMImages\Readhead.lua"/>
 <Script file = "PNM.lua"/>
 
 </Ui>

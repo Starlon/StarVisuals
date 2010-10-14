@@ -26,12 +26,33 @@ local defaults = {
 		update = 100,
 		images = {
 			[1] = {
+				name = "Tiger",
+				pnm = StarVisualsTiger,
+				pixel = 1,
+				points = {{"CENTER", "UIParent", "CENTER", 0, 64 * 2 + 20}},
+				enabled = 1
+			},
+			[2] = {
+				name = "Readhead",
+				pnm = StarVisualsReadhead,
+				pixel = 1,
+				points = {{"CENTER", "UIParent", "CENTER", 0, 64}},
+				enabled = true
+			},		
+			[3] = {
 				name = "Snail",
 				pnm = StarVisualsSnail,
 				pixel = 1,
-				points = {{"CENTER", "UIParent", "CENTER", 0, -100}},
+				points = {{"CENTER", "UIParent", "CENTER", 0, -64}},
 				enabled = true
-			}
+			},
+			[4] = {
+				name = "Rays",
+				pnm = StarVisualsRays,
+				pixel = 1,
+				points = {{"CENTER", "UIParent", "CENTER", 0, -64 * 2 - 20}},
+				enabled = true
+			},
 		}
 	}
 }
@@ -84,7 +105,7 @@ local function createImages()
 				image.textures[n] = frame:CreateTexture()
 				image.textures[n]:SetHeight(image.pixel)
 				image.textures[n]:SetWidth(image.pixel)
-				image.textures[n]:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", col * image.pixel, (row + 1) * image.pixel)
+				image.textures[n]:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", col * image.pixel, (image.h - row + 1) * image.pixel)
 				image.textures[n]:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
 				image.textures[n]:Show()
 			end
@@ -163,7 +184,6 @@ function update()
 			end
 		elseif pnm.colorimage then
 			for n = 0, pnm.h * pnm.w - 1 do
-				if n + 3 >= pnm.h * pnm.w then break end
 				local red, green, blue = PluginColor.Color2RGBA(pnm.colorimage[n])
 				pnm.textures[n]:SetVertexColor(red, green, blue)
 			end		
