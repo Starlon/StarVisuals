@@ -30,7 +30,7 @@ local defaults = {
 				pnm = StarVisualsTiger,
 				pixel = 1,
 				points = {{"CENTER", "UIParent", "CENTER", 0, 64 * 2 + 20}},
-				enabled = 1
+				enabled = true
 			},
 			[2] = {
 				name = "Readhead",
@@ -157,7 +157,7 @@ end)
 function buildImages()
 	local stop = true
 	for k, v in pairs(mod.coroutines) do
-		if coroutine.status(v) ~= "dead" then
+		if k.enabled and coroutine.status(v) ~= "dead" then
 			stop = false
 			local ret, ret2 = coroutine.resume(v, k)
 			if ret2 then error(ret2) end
