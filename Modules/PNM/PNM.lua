@@ -58,11 +58,16 @@ local defaults = {
 }
 
 local buildImages
+local insertImage
 function mod:OnInitialize()
 	self.db = StarVisuals.db:RegisterNamespace(self:GetName(), defaults)
 	StarVisuals:SetOptionsDisabled(options, true)
 		
-	self.timer = LibTimer:New("PNM build", self.db.profile.update, true, buildImages)	
+	self.timer = LibTimer:New("PNM build", self.db.profile.update, true, buildImages)
+	self.coroutines = {}
+	for i, v in ipairs(self.db.profile.images) do
+		self.coroutines[v] = coroutine.create(insertImage)
+	end
 end
 
 local function copy(tbl)
@@ -76,82 +81,95 @@ local function copy(tbl)
 	return newTbl
 end
 
+function insertImage(image)
+	local image = LibPNM:New("image", copy(image), draw)
+	local frame = CreateFrame("Frame")
+	frame:SetParent(UIParent, "StarVisuals_" .. image.config.name:gsub(" ", "_"))
+			
+	frame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+		tile = true,
+		tileSize = 4,
+		edgeSize=4, 
+		insets = { left = 0, right = 0, top = 0, bottom = 0}})
+	frame:ClearAllPoints()
+			
+	frame:SetAlpha(1)
+	frame:SetBackdropColor(0, 0, 0)
+			
+	frame:SetWidth(image.w * image.pixel)
+	frame:SetHeight(image.h * image.pixel)
+			
+	for _, point in ipairs(image.config.points or {{"CENTER", "UIParent", "CENTER"}}) do
+		frame:SetPoint(unpack(point))
+	end
+			
+	frame:Show()
+	image.textures = {}
+	for row = 0, image.h - 1 do
+		for col = 0, image.w - 1 do
+		--for n = 0, image.height * image.width - 1 do
+			--local row, col = PluginUtils.GetCoords(n, image.width)
+			local n = row * image.w + col
+			image.textures[n] = frame:CreateTexture()
+			image.textures[n]:SetHeight(image.pixel)
+			image.textures[n]:SetWidth(image.pixel)
+			image.textures[n]:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", col * image.pixel, (image.h - row + 1) * image.pixel)
+			image.textures[n]:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
+			image.textures[n]:Show()
+			if image.bitmap then
+				if image.bitmap[n] then
+					image.textures[n]:SetVertexColor(1, 1, 1)
+				else
+					image.textures[n]:SetVertexColor(0, 0, 0)
+				end
+			elseif image.grayimage then
+				local blue = image.grayimage[n] / 100 * image.n
+				local green = bit.lshift(image.grayimage[n] / 100 * image.n, 8)
+				local red = bit.lshift(image.grayimage[n] / 100 * image.n, 16)
+				local color = bit.bor(bit.bor(red, green), blue)
+				image.textures[n]:SetVertexColor(PluginColor.Color2RGBA(color))
+			elseif image.colorimage then
+				local color = image.colorimage[n]
+				local red = color.r / image.n
+				local green = color.g / image.n
+				local blue = color.b / image.n
+				image.textures[n]:SetVertexColor(red, green, blue)
+			end					
+		end
+		coroutine.yield()
+	end
+	image.canvas = frame
+	tinsert(mod.images, image)
+end
+
 local co = coroutine.create(function()
 	if type(mod.images) ~= "table" then mod.images = {} end
 
 	for k, image in pairs(mod.db.profile.images) do
 		if image.enabled then
-			local image = LibPNM:New("image", copy(image), draw)
-			local frame = CreateFrame("Frame")
-			frame:SetParent(UIParent, "StarVisuals_" .. image.config.name:gsub(" ", "_"))
-			
-			frame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-				tile = true,
-				tileSize = 4,
-				edgeSize=4, 
-				insets = { left = 0, right = 0, top = 0, bottom = 0}})
-			frame:ClearAllPoints()
-			
-			frame:SetAlpha(1)
-			frame:SetBackdropColor(0, 0, 0)
-			
-			frame:SetWidth(image.w * image.pixel)
-			frame:SetHeight(image.h * image.pixel)
-			
-			for _, point in ipairs(image.config.points or {{"CENTER", "UIParent", "CENTER"}}) do
-				frame:SetPoint(unpack(point))
-			end
-			
-			frame:Show()
-			image.textures = {}
-			for row = 0, image.h - 1 do
-				for col = 0, image.w - 1 do
-				--for n = 0, image.height * image.width - 1 do
-					--local row, col = PluginUtils.GetCoords(n, image.width)
-					local n = row * image.w + col
-					image.textures[n] = frame:CreateTexture()
-					image.textures[n]:SetHeight(image.pixel)
-					image.textures[n]:SetWidth(image.pixel)
-					image.textures[n]:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", col * image.pixel, (image.h - row + 1) * image.pixel)
-					image.textures[n]:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
-					image.textures[n]:Show()
-					if image.bitmap then
-					elseif image.grayimage then
-						local blue = image.grayimage[n] / 100 * image.n
-						local green = bit.lshift(image.grayimage[n] / 100 * image.n, 8)
-						local red = bit.lshift(image.grayimage[n] / 100 * image.n, 16)
-						local color = bit.bor(bit.bor(red, green), blue)
-						image.textures[n]:SetVertexColor(PluginColor.Color2RGBA(color))
-					elseif image.colorimage then
-						local color = image.colorimage[n]
-						local red = color.r / image.n
-						local green = color.g / image.n
-						local blue = color.b / image.n
-						image.textures[n]:SetVertexColor(red, green, blue)
-					end					
-				end
-				coroutine.yield()
-			end
-			image.canvas = frame
-			tinsert(mod.images, image)
+
 		end
 	end
 end)
 
 function buildImages()
-	if coroutine.status(co) == 'dead' then
+	local stop = true
+	for k, v in pairs(mod.coroutines) do
+		if coroutine.status(v) ~= "dead" then
+			stop = false
+			local ret, ret2 = coroutine.resume(v, k)
+			if ret2 then error(ret2) end
+		end
+	end
+	if stop then
 		mod.timer:Stop()
-		update()
-	else
-		local ret, ret2 = coroutine.resume(co)
-		if ret2 then error(ret2) end
 	end
 end
 
 function mod:OnEnable()
 	StarVisuals:SetOptionsDisabled(options, false)
 	self.timer:Start()
-	update()
+	
 end
 
 function mod:OnDisable()
@@ -163,6 +181,20 @@ function mod:OnDisable()
 end
 
 function mod:GetOptions()
+	options.images = {
+		name = "Images",
+		type = "group",
+		args = {
+			add = {
+				name = "Add Image",
+				type = "input",
+				set = function(info, v)
+					local pnm = {name = v, pixel = LibPNM.defaults.pixel}
+					tinsert(mod.db.profile.images, pnm)
+				end
+			}
+		}
+	}
 	for i, image in ipairs(self.db.profile.images) do
 		options.images.args["PNM"..i] = {
 			name = image.name,
@@ -171,15 +203,4 @@ function mod:GetOptions()
 		}
 	end
 	return options
-end
-
-function mod:ClearImages()
-do return end
-	for k, widget in pairs(mod.images) do
-		widget:Del()
-	end
-	wipe(mod.images)
-end
-
-function update()
 end
