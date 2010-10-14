@@ -49,5 +49,7 @@ externals:
     Libs/LibDataBroker-1.1:
         url: git://github.com/tekkub/libdatabroker-1-1.git
         tag: v1.1.4
+    Libs/LibTransition-1.0:
+        url: svn://svn.wowace.com/wow/libtransition-1-0/mainline/trunk
     Libs/LibScriptableDisplay-1.0:
         url: svn://svn.curseforge.net/wow/libscriptabledisplay-1-0/mainline/trunk

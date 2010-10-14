@@ -57,11 +57,12 @@ local defaults = {
 	}
 }
 
+local buildImages
 function mod:OnInitialize()
 	self.db = StarVisuals.db:RegisterNamespace(self:GetName(), defaults)
 	StarVisuals:SetOptionsDisabled(options, true)
 		
-	self.timer = LibTimer:New("PNM", self.db.profile.update, true, update)	
+	self.timer = LibTimer:New("PNM build", self.db.profile.update, true, buildImages)	
 end
 
 local function copy(tbl)
@@ -75,7 +76,7 @@ local function copy(tbl)
 	return newTbl
 end
 
-local function createImages()
+local co = coroutine.create(function()
 	if type(mod.images) ~= "table" then mod.images = {} end
 
 	for k, image in pairs(mod.db.profile.images) do
@@ -109,16 +110,30 @@ local function createImages()
 				image.textures[n]:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
 				image.textures[n]:Show()
 			end
+			coroutine.yield(false)
 			end
 			image.canvas = frame
 			tinsert(mod.images, image)
+		end
+		coroutine.yield(true)
+	end
+end)
+
+function buildImages()
+	if coroutine.status(co) == 'dead' then
+		mod.timer:Stop()
+		update()
+	else
+		local ret = coroutine.resume(co)
+		if ret then
+			update()
 		end
 	end
 end
 
 function mod:OnEnable()
 	StarVisuals:SetOptionsDisabled(options, false)
-	createImages()
+	self.timer:Start()
 	update()
 end
 
