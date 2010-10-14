@@ -62,8 +62,8 @@ end
 
 ]],
 		update = 100,
-		width = 200,
-		height = 200,
+		width = 64,
+		height = 64,
 		pixel = 1,
 		--drawLayer = "UIParent",
 		enabled = true,
