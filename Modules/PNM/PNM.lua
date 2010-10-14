@@ -83,34 +83,54 @@ local co = coroutine.create(function()
 		if image.enabled then
 			local image = LibPNM:New("image", copy(image), draw)
 			local frame = CreateFrame("Frame")
-			frame:SetParent(UIParent)
+			frame:SetParent(UIParent, "StarVisuals_" .. image.config.name:gsub(" ", "_"))
+			
 			frame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 				tile = true,
 				tileSize = 4,
 				edgeSize=4, 
 				insets = { left = 0, right = 0, top = 0, bottom = 0}})
 			frame:ClearAllPoints()
+			
 			frame:SetAlpha(1)
+			frame:SetBackdropColor(0, 0, 0)
+			
 			frame:SetWidth(image.w * image.pixel)
 			frame:SetHeight(image.h * image.pixel)
+			
 			for _, point in ipairs(image.config.points or {{"CENTER", "UIParent", "CENTER"}}) do
 				frame:SetPoint(unpack(point))
 			end
+			
 			frame:Show()
 			image.textures = {}
 			for row = 0, image.h - 1 do
-			for col = 0, image.w - 1 do
-			--for n = 0, image.height * image.width - 1 do
-				--local row, col = PluginUtils.GetCoords(n, image.width)
-				local n = row * image.w + col
-				image.textures[n] = frame:CreateTexture()
-				image.textures[n]:SetHeight(image.pixel)
-				image.textures[n]:SetWidth(image.pixel)
-				image.textures[n]:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", col * image.pixel, (image.h - row + 1) * image.pixel)
-				image.textures[n]:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
-				image.textures[n]:Show()
-			end
-			coroutine.yield(false)
+				for col = 0, image.w - 1 do
+				--for n = 0, image.height * image.width - 1 do
+					--local row, col = PluginUtils.GetCoords(n, image.width)
+					local n = row * image.w + col
+					image.textures[n] = frame:CreateTexture()
+					image.textures[n]:SetHeight(image.pixel)
+					image.textures[n]:SetWidth(image.pixel)
+					image.textures[n]:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", col * image.pixel, (image.h - row + 1) * image.pixel)
+					image.textures[n]:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
+					image.textures[n]:Show()
+					if image.bitmap then
+					elseif image.grayimage then
+						local blue = image.grayimage[n] / 100 * image.n
+						local green = bit.lshift(image.grayimage[n] / 100 * image.n, 8)
+						local red = bit.lshift(image.grayimage[n] / 100 * image.n, 16)
+						local color = bit.bor(bit.bor(red, green), blue)
+						image.textures[n]:SetVertexColor(PluginColor.Color2RGBA(color))
+					elseif image.colorimage then
+						local color = image.colorimage[n]
+						local red = color.r / image.n
+						local green = color.g / image.n
+						local blue = color.b / image.n
+						image.textures[n]:SetVertexColor(red, green, blue)
+					end					
+				end
+				coroutine.yield(false)
 			end
 			image.canvas = frame
 			tinsert(mod.images, image)
@@ -124,10 +144,8 @@ function buildImages()
 		mod.timer:Stop()
 		update()
 	else
-		local ret = coroutine.resume(co)
-		if ret then
-			update()
-		end
+		local ret, ret2 = coroutine.resume(co)
+		if ret2 then error(ret2) end
 	end
 end
 
