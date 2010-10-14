@@ -82,6 +82,8 @@ local function copy(tbl)
 end
 
 function insertImage(image)
+	if type(mod.images) ~= "table" then mod.images = {} end
+	
 	local image = LibPNM:New("image", copy(image), draw)
 	local frame = CreateFrame("Frame")
 	frame:SetParent(UIParent, "StarVisuals_" .. image.config.name:gsub(" ", "_"))
@@ -143,7 +145,7 @@ function insertImage(image)
 end
 
 local co = coroutine.create(function()
-	if type(mod.images) ~= "table" then mod.images = {} end
+	
 
 	for k, image in pairs(mod.db.profile.images) do
 		if image.enabled then
