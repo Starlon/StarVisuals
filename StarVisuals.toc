@@ -1,4 +1,4 @@
-## Interface: 40300
+## Interface: 40000
 ## Title: StarVisuals
 ## Notes: Visualizations from outerspace
 ## Author: Starlon
