@@ -4,7 +4,7 @@
 ## Author: Starlon
 ## Version: 1.0
 ## X-StarTip-Version: @project-version@
-## OptionalDeps: Ace3, LibScriptableDisplay-1.0
+## OptionalDeps: Ace3, LibScriptableDisplay-1.0, StarTip
 ## SavedVariables: StarVisualsDB
 
 Libs\LibStub\LibStub.lua

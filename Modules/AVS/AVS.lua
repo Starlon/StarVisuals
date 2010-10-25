@@ -16,7 +16,45 @@ local textures = {[0] = "Interface\\Addons\\StarVisuals\\Media\\black.blp", [1] 
 local environment = {}
 local update
 
-local options = {
+local options = {}
+local optionsDefaults = {
+	add = {
+		name = "Add Image",
+		desc = "Add an image widget",
+		type = "input",
+		set = function(info, v)
+			local widget = {
+				name = v,
+				height = AVSSuperScope.defaults.height,
+				width = AVSSuperScope.defaults.width,
+				enabled = true,
+				points = {{"CENTER"}},
+				parent = "UIParent"
+			}
+			tinsert(mod.db.profile.images, widget)
+			StarVisuals:RebuildOpts()
+		end,
+		order = 5
+	},
+	reset = {
+		name = "Reset Images",
+		desc = "Restart images. Use this after enabling or disabling images.",
+		type = "execute",
+		func = function()
+			mod:ResetImages()
+		end,
+		order = 6
+	},
+	defaults = {
+		name = "Restore Defaults",
+		desc = "Restore Defaults",
+		type = "execute",
+		func = function()
+			mod.db.profile.images = {}
+			StarTip:RebuildOpts()
+		end,
+		order = 7
+	},
 }
 
 local foo = 200
@@ -30,20 +68,20 @@ local defaults = {
 n=32
 ]],
 				frame = [[
-t=t-5				
+t=t-5
 ]],
 				beat = [[
 ]],
 				point = [[
-d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d; y=sin(r)*d				
+d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d; y=sin(r)*d
 ]],
-				width = 32,
-				height = 32,
+				width = 24,
+				height = 24,
 				pixel = 4,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, -100}},
 				enabled = true,
-				next = 2
+				--next = 2
 			},
 			[2] = {
 				name = "Swirlie Dots",
@@ -69,8 +107,8 @@ y = cos(u*di) * .6;
 x = x + ( cos(t) * .005 );
 y = y + ( sin(t) * .005 );
 ]],
-				width = 32,
-				height = 32,
+				width = 24,
+				height = 24,
 				pixel = 4,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 100}},
@@ -108,7 +146,7 @@ x=x4/(1+z4/dst);y=y4/(1+z4/dst)
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
 				enabled = false
-			},			
+			},
 		}
 	}
 }
@@ -116,8 +154,9 @@ x=x4/(1+z4/dst);y=y4/(1+z4/dst)
 function mod:OnInitialize()
 	self.db = StarVisuals.db:RegisterNamespace(self:GetName(), defaults)
 	StarVisuals:SetOptionsDisabled(options, true)
-		
-	self.timer = LibTimer:New("Images", self.db.profile.update, true, update)	
+
+	self.timer = LibTimer:New("Images", self.db.profile.update, true, update)
+	self.images = {}
 end
 
 local function copy(tbl)
@@ -135,15 +174,15 @@ local function createImages()
 	if type(mod.images) ~= "table" then mod.images = {} end
 
 	mod.visdata = LibBuffer:New("Superscope visdata", 576, 0)
-	for i, image in ipairs(mod.db.profile.images) do
-		if image.enabled then
-			local image = AVSSuperScope:New("image", copy(image), draw)
+	for i, imagedb in ipairs(mod.db.profile.images) do
+		if imagedb.enabled then
+			local image = AVSSuperScope:New("image", copy(imagedb), draw)
 			local frame = CreateFrame("Frame")
 			frame:SetParent(UIParent)
 			frame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 				tile = true,
-				tileSize = 4,
-				edgeSize=4, 
+				tileSize = 1,
+				edgeSize=1,
 				insets = { left = 0, right = 0, top = 0, bottom = 0}})
 			frame:ClearAllPoints()
 			frame:SetAlpha(1)
@@ -168,10 +207,10 @@ local function createImages()
 			end
 			end
 			image.canvas = frame
-			tinsert(mod.images, image)
+			mod.images[imagedb] = image
 		end
 	end
-	for i, image in ipairs(mod.images) do
+	for i, image in pairs(mod.images) do
 		image.next = mod.images[image.config.next or -1]
 	end
 end
@@ -185,22 +224,31 @@ end
 function mod:OnDisable()
 	StarVisuals:SetOptionsDisabled(options, true)
 	self.timer:Stop()
-	for k, image in pairs(self.images) do
+	for k, image in pairs(self.images or {}) do
 		image.canvas:Hide()
 	end
 	wipe(self.images)
 end
 
+function mod:CreateImages()
+	createImages()
+end
+
 function mod:ClearImages()
-do return end
-	for k, widget in pairs(mod.images) do
+	for k, widget in pairs(mod.images or {}) do
 		widget:Del()
+		widget.canvas:Hide()
 	end
-	wipe(mod.images)
+	wipe(mod.images or {})
+end
+
+function mod:ResetImages()
+	self:ClearImages()
+	self:CreateImages()
 end
 
 function update()
-	for i, widget in ipairs(mod.images or {}) do
+	for i, widget in pairs(mod.images or {}) do
 		widget.buffer:Clear()
 		local fbout = {}
 		for i = 0, 1024 do
@@ -212,5 +260,37 @@ function update()
 			local color = widget.buffer.buffer[n]
 			widget.textures[n]:SetVertexColor(PluginColor.Color2RGBA(color))
 		end
+	end
+end
+
+function mod:GetOptions()
+	return options
+end
+
+function mod:RebuildOpts()
+	local defaults = AVSSuperScope.defaults
+	self:ResetImages()
+	wipe(options)
+	for k, v in pairs(optionsDefaults) do
+		options[k] = v
+	end
+	for i, db in ipairs(self.db.profile.images) do
+		options[db.name:gsub(" ", "_")] = {
+			name = db.name,
+			type="group",
+			order = i,
+			args=AVSSuperScope:GetOptions(db, StarVisuals.RebuildOpts, StarVisuals)
+		}
+		options[db.name:gsub(" ", "_")].args.delete = {
+			name = "Delete",
+			desc = "Delete this widget",
+			type = "execute",
+			func = function()
+				self.db.profile.images[i] = nil
+				self:ResetImages()
+				StarVisuals:RebuildOpts()
+			end,
+			order = 13
+		}
 	end
 end
