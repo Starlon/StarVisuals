@@ -2,8 +2,7 @@
 ## Title: StarVisuals
 ## Notes: Visualizations from outerspace
 ## Author: Starlon
-## Version: 1.0
-## X-StarTip-Version: @project-version@
+## Version: @project-version@
 ## OptionalDeps: Ace3, LibScriptableDisplay-1.0, StarTip
 ## SavedVariables: StarVisualsDB
 
