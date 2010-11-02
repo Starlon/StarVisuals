@@ -58,6 +58,7 @@ local optionsDefaults = {
 }
 
 local foo = 200
+local size = 128
 local defaults = {
 	profile = {
 		update = 100,
@@ -65,7 +66,7 @@ local defaults = {
 			[1] = {
 				name = "Spiral",
 				init = [[
-n=18
+n=64
 ]],
 				frame = [[
 t=t-5
@@ -75,12 +76,12 @@ t=t-5
 				point = [[
 d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d; y=sin(r)*d
 ]],
-				width = 24,
-				height = 24,
+				width = size,
+				height = size,
 				pixel = 4,
 				drawLayer = "UIParent",
-				points = {{"CENTER", "UIParent", "CENTER", 0, -100}},
-				enabled = true,
+				points = {{"CENTER", "UIParent", "CENTER", 0, 50}},
+				enabled = false,
 				--next = 2
 			},
 			[2] = {
@@ -107,16 +108,17 @@ y = cos(u*di) * .6;
 x = x + ( cos(t) * .005 );
 y = y + ( sin(t) * .005 );
 ]],
-				width = 24,
-				height = 24,
-				pixel = 4,
+				width = size,
+				height = size,
+				pixel = 1,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 100}},
 				enabled = false
 			},
-			[3] = { -- this doesn't seem to work. Maybe someone else will have better luck. There's a file in StarVisual's top folder that explains this.
+			[3] = { 
 				name = "3D",
 				init = [[
+-- this doesn't seem to work. Maybe someone else will have better luck. There's a file in StarVisual's top folder that explains this.				
 n=7; r=5
 mx=0;my=0;mz=0
 dst=10
@@ -147,8 +149,33 @@ x=x4/(1+z4/dst);y=y4/(1+z4/dst)
 				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
 				enabled = false
 			},
-			[4] = {
-				name = "Checkerboard",
+			[4] = { 
+				name = "3D #2",
+				init = [[
+rx=random(100)/1000-0.05; ry=random(100)/1000-0.05; rz=random(100)/1000-0.05; 				
+zs=sqrt(3)				
+]],
+				frame = [[
+rx=rx+drx; ry=ry+dry; rz=rz+drz; cx=cos(x); sx=sin(x); cy=cos(y); sy=sin(y); cz=cos(z); sz=sin(z);				
+]],
+				beat = [[
+rx=random(100)/1000-0.05; ry=random(100)/1000-0.05; rz=random(100)/1000-0.05; 				
+]],
+				point = [[
+x2=x1*sz+y1*cz; y2=x1*cz-y1*sz;
+x3=x2*sy+z1*cy; z2=x2*cy-z1*sy;
+y3=y2*sx+z2*cx; z3=1/(y2*cx-z2*sx+zs);
+x=x3*z3; y=y3*z3;				
+]],
+				width = 32,
+				height = 32,
+				pixel = 4,
+				drawLayer = "UIParent",
+				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
+				enabled = false
+			},
+			[5] = {
+				name = "Gradient",
 				init = [[
 n=100
 ]],
@@ -157,19 +184,109 @@ n=100
 				beat = [[
 ]],
 				point = [[
-x=x*2-1;y=0;
-col = i
---blue=col ; red=col ; green=col
+x=i*2-1 ;
+y=0 ;
+col=i * 255 ;
+blue=col ; red=col ; green=col
 ]],
 				width = 24,
 				height = 24,
 				pixel = 4,
 				drawLayer = "UIParent",
-				points = {{"CENTER", "UIParent", "CENTER", 0, -100 - 24 * 4 -50}},
-				enabled = true,
+				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
+				enabled = false,
 				--next = 2
 			},	
-			
+			[6] = {
+				name = "Scope Trick",
+				init = [[
+pi=acos(-1); sp=0.1;siz=0.7;vi=0; sn=25;cn=6;
+tx = 0
+ty = 0
+tz = 0
+ex = 0
+ey = 0
+ez = 0
+tb = 2
+u = 1
+count = 0
+]],
+				frame = [[				
+n=sqrt(w*w+h*h)*pi*sn/30*siz*cn; 
+ex=ex+tx*sp;
+ey=ey+ty*sp;
+ez=ez+tz*sp; 
+if vi == 0 then
+	kx=sin(ex)*pi/8
+	ky=sin(ey)*pi/8
+	kz=ez
+else
+    kx=-pi/2+sin(ex)*pi/8;
+    ky=ey;
+    kz=sin(ez)*pi/8; 
+end
+sx=sin(kx);
+sy=sin(ky);
+sz=sin(kz); 
+cx=cos(kx);
+cy=cos(ky);
+cz=cos(kz);
+count = count + 1
+if count % 2 == 0 then
+    tx = 0
+    ty = 0
+    tz = 0
+    ex = 0
+    ey = 0
+    ez = 0
+    tb = 2
+    u = 1
+end
+]],
+				beat = [[
+tx = random(w)
+ty = random(h)
+tz = random(100)
+ex = random(w)
+ey = random(h)
+ez = random(100)
+tb = tb + 2
+u = u + 1
+count = 0
+]],
+				point = [[
+r=i*pi*2*sn;
+d=((i*sn)%sn+1)/sn*1.2;
+if tb == 2 then
+	u = 1-u
+else
+	u = tb
+end
+x1=sin(r)*d*siz;
+y1=cos(r)*d*siz;
+--z1=(1-getspec(d,0.5/sn,0))*siz*(u*2-1);
+z1=(1-v)*siz*(u*2-1);
+y2=y1*cx-z1*sx;
+z2=y1*sx+z1*cx; 
+x2=z2*sy+x1*cy;
+z3=z2*cy-x1*sy; 
+x3=x2*cz-y2*sz;
+y3=y2*cz+x2*sz; 
+x=x3/(1+z3/3);
+y=y3/(1+z3/3);
+cl=sqrt(2)/4*3-z3; 
+red=cl*(sin(d/1.2*pi*2)/2+0.5) * 255;
+green=cl*(sin(d/1.2*pi*2+pi*2/3)/2+0.5) * 255;
+blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5) * 255;
+]],
+				width = 24,
+				height = 24,
+				pixel = 4,
+				drawLayer = "UIParent",
+				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
+				enabled = true,
+				--next = 2
+			},				
 		}
 	}
 }
@@ -283,7 +400,10 @@ function update()
 			mod.visdata[i] = random(100) / 100
 			total = total + mod.visdata[i]
 		end
-		local isBeat = total / 1024 > 700
+		local isBeat
+		if total * 100 / 1024 * 10 > 520 then
+			isBeat = true
+		end
 		--widget.framebuffer = widget.framebuffer or LibBuffer:New("framebuffer", widget.width * widget.height)
 		widget:Render(mod.visdata, isBeat, widget.framebuffer, fbout, widget.width, widget.height)
 		for row = 0, widget.height - 1 do
