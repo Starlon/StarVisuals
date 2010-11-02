@@ -3,7 +3,7 @@ mod.name = "AVS"
 mod.toggled = true
 mod.defaultOff = true
 local LibBuffer = LibStub("LibScriptableDisplayBuffer-1.0")
-local LibCore = LibStub("LibScriptableDisplayCore-1.0")
+local LibCore = LibStub("LibScriptableDisplayCoreLite-1.0")
 local LibTimer = LibStub("LibScriptableDisplayTimer-1.0")
 local PluginUtils = LibStub("LibScriptableDisplayPluginUtils-1.0"):New({})
 local AVSSuperScope = LibStub("LibScriptableDisplayAVSSuperScope-1.0")
@@ -13,7 +13,7 @@ local GameTooltip = _G.GameTooltip
 local StarVisuals = _G.StarVisuals
 local UIParent = _G.UIParent
 local textures = {[0] = "Interface\\Addons\\StarVisuals\\Media\\black.blp", [1] = "Interface\\Addons\\StarVisuals\\Media\\white.blp"}
-local environment = {}
+local environment = {_G=_G, coroutine=coroutine}
 local update
 
 local options = {}
@@ -65,7 +65,7 @@ local defaults = {
 			[1] = {
 				name = "Spiral",
 				init = [[
-n=32
+n=18
 ]],
 				frame = [[
 t=t-5
@@ -147,6 +147,29 @@ x=x4/(1+z4/dst);y=y4/(1+z4/dst)
 				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
 				enabled = false
 			},
+			[4] = {
+				name = "Checkerboard",
+				init = [[
+n=100
+]],
+				frame = [[
+]],
+				beat = [[
+]],
+				point = [[
+x=x*2-1;y=0;
+col = i
+--blue=col ; red=col ; green=col
+]],
+				width = 24,
+				height = 24,
+				pixel = 4,
+				drawLayer = "UIParent",
+				points = {{"CENTER", "UIParent", "CENTER", 0, -100 - 24 * 4 -50}},
+				enabled = true,
+				--next = 2
+			},	
+			
 		}
 	}
 }
@@ -157,6 +180,8 @@ function mod:OnInitialize()
 
 	self.timer = LibTimer:New("Images", self.db.profile.update, true, update)
 	self.images = {}
+	
+	self.core = LibCore:New(self, environment, "StarVisuals.AVS", {}, nil, errorLevel)
 end
 
 local function copy(tbl)
@@ -176,7 +201,8 @@ local function createImages()
 	mod.visdata = LibBuffer:New("Superscope visdata", 576, 0)
 	for i, imagedb in ipairs(mod.db.profile.images) do
 		if imagedb.enabled then
-			local image = AVSSuperScope:New("image", copy(imagedb), draw)
+			local image = AVSSuperScope:New(imagedb.name or "avs", copy(imagedb), draw)
+			image.framebuffer = LibBuffer:New("framebuffer", image.width * image.height)
 			local frame = CreateFrame("Frame")
 			frame:SetParent(UIParent)
 			frame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -219,6 +245,7 @@ function mod:OnEnable()
 	StarVisuals:SetOptionsDisabled(options, false)
 	createImages()
 	self.timer:Start()
+	
 end
 
 function mod:OnDisable()
@@ -251,14 +278,27 @@ function update()
 	for i, widget in pairs(mod.images or {}) do
 		widget.buffer:Clear()
 		local fbout = {}
+		local total = 0
 		for i = 0, 1024 do
 			mod.visdata[i] = random(100) / 100
+			total = total + mod.visdata[i]
 		end
-		widget.framebuffer = widget.framebuffer or LibBuffer:New("framebuffer", widget.width * widget.height)
+		local isBeat = total / 1024 > 700
+		--widget.framebuffer = widget.framebuffer or LibBuffer:New("framebuffer", widget.width * widget.height)
 		widget:Render(mod.visdata, isBeat, widget.framebuffer, fbout, widget.width, widget.height)
-		for n = 0, widget.height * widget.width - 1 do
+		for row = 0, widget.height - 1 do
+		for col = 0, widget.width - 1 do
+		--for n = 0, widget.height * widget.width - 1 do
+			local n = row * widget.width + col
+			local n2 = (widget.height - row - 1) * widget.width + col
 			local color = widget.buffer.buffer[n]
-			widget.textures[n]:SetVertexColor(PluginColor.Color2RGBA(color))
+			local test = widget.textures[n2]
+			if not test then
+				StarTip:Print(n, n2, "test")
+			end
+			widget.textures[n2]:SetVertexColor(PluginColor.Color2RGBA(color))
+		--end
+		end
 		end
 	end
 end
