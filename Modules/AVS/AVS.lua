@@ -58,7 +58,7 @@ local optionsDefaults = {
 }
 
 local foo = 200
-local size = 128
+local size = 96
 local defaults = {
 	profile = {
 		update = 100,
@@ -279,9 +279,9 @@ red=cl*(sin(d/1.2*pi*2)/2+0.5) * 255;
 green=cl*(sin(d/1.2*pi*2+pi*2/3)/2+0.5) * 255;
 blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5) * 255;
 ]],
-				width = 24,
-				height = 24,
-				pixel = 4,
+				width = 16,
+				height = 16,
+				pixel = 8,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
 				enabled = true,
