@@ -256,7 +256,7 @@ u = 1
 count = 0
 ]],
 				frame = [[				
-n=sqrt(w*w+h*h)*pi*sn/3*siz*cn; 
+n=sqrt(w*w+h*h)*pi*sn/5*siz*cn; 
 ex=(ex or 0)+tx*sp;
 ey=(ey or 0)+ty*sp;
 ez=(ez or 0)+tz*sp; 
