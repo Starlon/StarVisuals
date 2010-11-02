@@ -232,7 +232,7 @@ cx=cos(kx);
 cy=cos(ky);
 cz=cos(kz);
 count = count + 1
-if count % 2 == 0 then
+if count % random(20) == 0 then
     tx = 0
     ty = 0
     tz = 0
