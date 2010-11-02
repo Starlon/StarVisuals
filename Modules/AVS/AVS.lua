@@ -76,9 +76,9 @@ t=t-5
 				point = [[
 d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d; y=sin(r)*d
 ]],
-				width = size,
-				height = size,
-				pixel = 4,
+				width = 96,
+				height = 96,
+				pixel = 3,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 50}},
 				enabled = false,
@@ -127,7 +127,8 @@ rdx=1;rdy=1;rdz=1
 p=PI;p2=15.0*p;p3=180/p
 ]],
 				frame = [[
-fr=(fr or 0)+0.01;mz=1+sin(fr)
+fr = fr or 0
+fr=fr+0.01;mz=1+sin(fr)
 rx=rx+rdx;ry=ry+rdy;rz=rz+rdz
 xs=sin(rx/p3);ys=sin(ry/p3);zs=sin(rz/p3);xc=cos(rx/p3);yc=cos(ry/p3);zc=cos(rz/p3)
 ]],
@@ -152,20 +153,60 @@ x=x4/(1+z4/dst);y=y4/(1+z4/dst)
 			[4] = { 
 				name = "3D #2",
 				init = [[
-rx=random(100)/1000-0.05; ry=random(100)/1000-0.05; rz=random(100)/1000-0.05; 				
-zs=sqrt(3)				
+n=12; r=.5;  --Just for this scope, which is a simple circle with a radius of 0.5 done in 7 steps.
+mx=0;my=0;mz=0; --Use these to move the center/base of your scope along the axes.
+dst=2; -- Normally you don't need to change this. It's the distance for the 3D/2D-Translation.
+--IMPORTANT: If you create, rotate or move a scope its z-values must not become lower 
+--than -dst => !!! z >= -dst for all z !!! 
+  
+rx=0;ry=0;rz=0; --Initrotation around x,y and z-axis in degrees.
+
+rdx=1;rdy=1;rdz=1; -- Permanent rotation around axes in degrees/frame. Set these to zero to stop rotation.
+
+p=3.14159265;p2=2.0*p;p3=180/p -- You'll never need to change these
+
 ]],
 				frame = [[
-rx=rx+drx; ry=ry+dry; rz=rz+drz; cx=cos(x); sx=sin(x); cy=cos(y); sy=sin(y); cz=cos(z); sz=sin(z);				
+-- This is a good place to setup additional movement for your scope. For Example:
+fr=(fr or 0)+0.01;mz=1+sin(fr) --will move the scope back and forward along the z-axis.
+
+-- Do not change these and add your input in front of them:
+
+rx=rx+rdx;ry=ry+rdy;rz=rz+rdz; --Rotation per Frame
+
+xs=sin(rx/p3);ys=sin(ry/p3);zs=sin(rz/p3);xc=cos(rx/p3);yc=cos(ry/p3);zc=cos(rz/p3) -- Sinuses and cosinuses for rotation in point-section (to save space and increase performance).
+
 ]],
 				beat = [[
-rx=random(100)/1000-0.05; ry=random(100)/1000-0.05; rz=random(100)/1000-0.05; 				
+-- Setup the beat reaction of your scope. For example change the rotation speed by random like this:				
+rdx=random(3)+1;rdy=random(3)+1;rdz=random(3)+1				
 ]],
 				point = [[
-x2=x1*sz+y1*cz; y2=x1*cz-y1*sz;
-x3=x2*sy+z1*cy; z2=x2*cy-z1*sy;
-y3=y2*sx+z2*cx; z3=1/(y2*cx-z2*sx+zs);
-x=x3*z3; y=y3*z3;				
+d=i+v*0.2; r=t+i*PI*200; x1=cos(r)*d; y1=sin(r)*d; z1 = 0
+
+--This is the 3D-Scope. Add your own scopes here by setting x1,y1 and z1. 
+--(Do not use x and y. They are generated in this section)
+
+--(In fact the example is not really 3D because of y1=0, but as you see,it can be nicely rotated anyway) 
+
+--IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+--The length of input in all of the sections is limited. So keep your scope as
+--short as possible. If the scope suddenly dissapears after a regular input you're
+--F***ed!
+--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+--Do not change anything else in this section:
+
+y2=y1*xc-z1*xs;z2=y1*xs+z1*xc; --Rotation around x-axis
+
+x2=z2*ys+x1*yc;z3=z2*yc-x1*ys; --Rotation around y-axis
+
+x3=x2*zc-y2*zs;y3=y2*zc+x2*zs; --Rotation around z-axis
+
+x4=mx+x3;y4=my+y3;z4=mz+z3; --Movement of center/base
+
+x=x4/(1+z4/dst);y=y4/(1+z4/dst); --3D/2D-Translation
+
 ]],
 				width = 32,
 				height = 32,
@@ -198,24 +239,27 @@ blue=col ; red=col ; green=col
 				--next = 2
 			},	
 			[6] = {
-				name = "Scope Trick",
+				name = "3D Scope Trick",
 				init = [[
-pi=acos(-1); sp=0.1;siz=0.7;vi=0; sn=25;cn=6;
-tx = 0
-ty = 0
-tz = 0
-ex = 0
-ey = 0
-ez = 0
-tb = 2
+pi=acos(-1); 
+sp=3; -- speed
+siz=.3; -- size
+vi=0; 
+sn=2;
+cn=1;
+
+tx = 5
+ty = 5
+tz = 1
+tb = 1
 u = 1
 count = 0
 ]],
 				frame = [[				
-n=sqrt(w*w+h*h)*pi*sn/30*siz*cn; 
-ex=ex+tx*sp;
-ey=ey+ty*sp;
-ez=ez+tz*sp; 
+n=sqrt(w*w+h*h)*pi*sn/3*siz*cn; 
+ex=(ex or 0)+tx*sp;
+ey=(ey or 0)+ty*sp;
+ez=(ez or 0)+tz*sp; 
 if vi == 0 then
 	kx=sin(ex)*pi/8
 	ky=sin(ey)*pi/8
@@ -231,28 +275,16 @@ sz=sin(kz);
 cx=cos(kx);
 cy=cos(ky);
 cz=cos(kz);
-count = count + 1
-if count % random(20) == 0 then
-    tx = 0
-    ty = 0
-    tz = 0
-    ex = 0
-    ey = 0
-    ez = 0
-    tb = 2
-    u = 1
-end
 ]],
 				beat = [[
-tx = random(w)
-ty = random(h)
-tz = random(100)
-ex = random(w)
-ey = random(h)
-ez = random(100)
-tb = tb + 2
-u = u + 1
+do return end
+tx = w - random(w) / 2 - 1
+ty = h - random(h) / 2 - 1
+tz = w - random(w) / 2 - 1
 count = 0
+do return end
+mx=v;my=v / 3;mz=v / 2 / 3; 
+--tx=(1-abs(mx))*if(mx,sign(mx),1);ty=(1-abs(my))*if(my,sign(my),1);tz=(1-abs(mz))*if(mz,sign(mz),1);
 ]],
 				point = [[
 r=i*pi*2*sn;
@@ -264,7 +296,6 @@ else
 end
 x1=sin(r)*d*siz;
 y1=cos(r)*d*siz;
---z1=(1-getspec(d,0.5/sn,0))*siz*(u*2-1);
 z1=(1-v)*siz*(u*2-1);
 y2=y1*cx-z1*sx;
 z2=y1*sx+z1*cx; 
@@ -279,12 +310,13 @@ red=cl*(sin(d/1.2*pi*2)/2+0.5) * 255;
 green=cl*(sin(d/1.2*pi*2+pi*2/3)/2+0.5) * 255;
 blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5) * 255;
 ]],
-				width = 32,
-				height = 32,
+				width = 64,
+				height = 64,
 				pixel = 2,
 				drawLayer = "UIParent",
 				points = {{"CENTER"}},
 				enabled = true,
+				drawMode = 1
 				--next = 2
 			},				
 		}
