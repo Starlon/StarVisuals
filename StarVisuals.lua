@@ -256,6 +256,16 @@ function StarVisuals:RebuildOpts()
 				get = function() return (self.db.profile.modules[k]  == nil and not v.defaultOff) or self.db.profile.modules[k] end,
 				order = 2
 			}
+			
+		end
+		if v.desc then
+			t.desc = {
+				name = "Description",
+				type = "input",
+				multiline = true,
+				get = function() return v.desc end,
+				order = 3
+			}
 		end
 		options.args.modules.args[v:GetName()].args = t
 	end

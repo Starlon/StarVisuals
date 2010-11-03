@@ -1,5 +1,6 @@
 local mod = StarVisuals:NewModule("AVS")
 mod.name = "AVS"
+mod.desc = "Enabling and disabling this module or its images will require a UI reload due to a bug."
 mod.toggled = true
 mod.defaultOff = true
 local LibBuffer = LibStub("LibScriptableDisplayBuffer-1.0")
@@ -278,13 +279,41 @@ cz=cos(kz);
 ]],
 				beat = [[
 do return end
-tx = w - random(w) / 2 - 1
-ty = h - random(h) / 2 - 1
-tz = w - random(w) / 2 - 1
-count = 0
-do return end
-mx=v;my=v / 3;mz=v / 2 / 3; 
---tx=(1-abs(mx))*if(mx,sign(mx),1);ty=(1-abs(my))*if(my,sign(my),1);tz=(1-abs(mz))*if(mz,sign(mz),1);
+mx=v
+my=v
+mz=v
+local sign = 1
+
+if mx ~= 0 then
+	if mx < 0 then
+		sign = -1
+	else
+		sign = 1
+	end
+end
+tx=(1-abs(mx))*sign;
+
+sign = 1
+if my ~= 0 then
+	if my < 0 then
+		sign = -1
+	else
+		sign = 1
+	end
+end
+ty=(1-abs(my))*sign;
+
+sign = 1
+if mz ~= 0 then
+	if mz < 0 then
+		sign = -1
+	else
+		sign = 1
+	end
+else
+	sign = 1
+end
+tz=(1-abs(mz))*sign;
 ]],
 				point = [[
 r=i*pi*2*sn;
@@ -319,7 +348,28 @@ blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5) * 255;
 				drawMode = 1
 				--next = 2
 			},				
-		}
+			[5] = {
+				name = "Simple Example",
+				init = [[
+k0, k1, kx, ky, x0, y0 = 1, 1, 1, 1, 0, 0
+n=k0*600; tpi=2*acos(-1);
+]],
+				frame = [[
+]],
+				beat = [[
+]],
+				point = [[
+d=k1*v+i*tpi; x=x0+pow(cos(d),3)*kx; y=y0+pow(sin(d),3)*ky;
+]],
+				width = 24,
+				height = 24,
+				pixel = 4,
+				drawLayer = "UIParent",
+				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
+				enabled = true,
+				--next = 2
+			},	
+		},
 	}
 }
 
