@@ -47,7 +47,7 @@ local defaultWidgets = {
 self:Clear()
 y_old = floor(self.height / 2);
 for i = 0, self.width - 1 do
-	y = (self.height / 2) + (noise[bit.rshift(i, 1) % #noise] * (self.height / 4));
+	y = (self.height / 2) + (noise[rshift(i, 1) % #noise] * (self.height / 4));
 	y = floor(y)
 	if (y > y_old) then
 		for j = y_old, y do
