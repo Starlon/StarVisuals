@@ -2,7 +2,7 @@ local mod = StarVisuals:NewModule("AVS")
 mod.name = "AVS"
 mod.desc = "Enabling and disabling this module or its images will require a UI reload due to a bug."
 mod.toggled = true
-mod.defaultOff = true
+mod.defaultOff = false
 local LibBuffer = LibStub("LibScriptableDisplayBuffer-1.0")
 local LibCore = LibStub("LibScriptableDisplayCoreLite-1.0")
 local LibTimer = LibStub("LibScriptableDisplayTimer-1.0")
@@ -115,7 +115,7 @@ y = y + ( sin(t) * .005 );
 				pixel = 3,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 100}},
-				drawMode = 0,
+				drawMode = 1,
 				enabled = false
 			},
 			[3] = { 
@@ -352,7 +352,7 @@ blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5) * 255;
 				drawMode = 1
 				--next = 2
 			},				
-			[5] = {
+			[7] = {
 				name = "Simple Example",
 				init = [[
 k0, k1, kx, ky, x0, y0 = 1, 1, 1, 1, 0, 0
@@ -374,6 +374,64 @@ d=k1*v+i*tpi; x=x0+pow(cos(d),3)*kx; y=y0+pow(sin(d),3)*ky;
 				drawMode = 1
 				--next = 2
 			},	
+			[8] = {
+				name = "Z",
+				init = [[
+n=4;
+halfx=10; halfy=5;
+]],
+				frame = [[
+asp=h/w;
+rlw=halfx/w;
+rlh=halfy/h;
+c=0;
+]],
+				beat = [[
+]],
+				point = [[
+x=if2(c%2,rlw,-rlw);
+y=if2(above(c,1),rlh,-rlh);
+c=c+1; 
+]],
+				width = 24,
+				height = 24,
+				pixel = 4,
+				drawLayer = "UIParent",
+				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
+				enabled = false,
+				drawMode = 1
+				--next = 2
+			},	
+			[9] = {
+				name = "Starfield",
+				init = [[
+n = 64
+]],
+				frame = [[
+r1=1/7;r2=4/9;r3=5/3;
+zo=_G.GetTime()*.1;
+]],
+				beat = [[
+]],
+				point = [[
+r1=r2*9333.2312311+r3*33222.93329; r1=r1-floor(r1);
+r2=r3*6233.73553+r1*9423.1323219; r2=r2-floor(r2);
+r3=r1*373.871324+r2*43322.4323441; r3=r3-floor(r3);
+z1=r3-zo;z1=.5/(z1-floor(z1)+.2);
+x=(r2*2-1)*z1;
+y=(r1*2-1)*z1;
+red=(1-exp(-z1*z1)) * 255; green=red; blue=red;
+]],
+				width = 94,
+				height = 94,
+				pixel = 3,
+				drawLayer = "UIParent",
+				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
+				enabled = false,
+				drawMode = 0
+				--next = 2
+			},	
+			
 		},
 	}
 }
@@ -516,7 +574,9 @@ end
 
 function mod:RebuildOpts()
 	local defaults = AVSSuperScope.defaults
-	self:ResetImages()
+	if self:IsEnabled() then
+		self:ResetImages()
+	end
 	wipe(options)
 	for k, v in pairs(optionsDefaults) do
 		options[k] = v
