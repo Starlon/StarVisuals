@@ -79,10 +79,11 @@ d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d; y=sin(r)*d
 ]],
 				width = 96,
 				height = 96,
-				pixel = 3,
+				pixel = 1,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 50}},
-				enabled = false,
+				enabled = true,
+				drawMode = 1
 				--next = 2
 			},
 			[2] = {
@@ -111,9 +112,10 @@ y = y + ( sin(t) * .005 );
 ]],
 				width = size,
 				height = size,
-				pixel = 4,
+				pixel = 3,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 100}},
+				drawMode = 0,
 				enabled = false
 			},
 			[3] = { 
@@ -149,7 +151,8 @@ x=x4/(1+z4/dst);y=y4/(1+z4/dst)
 				pixel = 4,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
-				enabled = false
+				enabled = false,
+				drawMode = 1
 			},
 			[4] = { 
 				name = "3D #2",
@@ -214,7 +217,8 @@ x=x4/(1+z4/dst);y=y4/(1+z4/dst); --3D/2D-Translation
 				pixel = 4,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
-				enabled = false
+				enabled = false,
+				drawMode = 1
 			},
 			[5] = {
 				name = "Gradient",
@@ -344,7 +348,7 @@ blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5) * 255;
 				pixel = 1,
 				drawLayer = "UIParent",
 				points = {{"CENTER"}},
-				enabled = true,
+				enabled = false,
 				drawMode = 1
 				--next = 2
 			},				
@@ -366,7 +370,8 @@ d=k1*v+i*tpi; x=x0+pow(cos(d),3)*kx; y=y0+pow(sin(d),3)*ky;
 				pixel = 4,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
-				enabled = true,
+				enabled = false,
+				drawMode = 1
 				--next = 2
 			},	
 		},
