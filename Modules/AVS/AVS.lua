@@ -341,7 +341,7 @@ blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5) * 255;
 ]],
 				width = 64,
 				height = 64,
-				pixel = 2,
+				pixel = 1,
 				drawLayer = "UIParent",
 				points = {{"CENTER"}},
 				enabled = true,
