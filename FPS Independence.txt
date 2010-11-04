@@ -1,0 +1,75 @@
+there's been some discussion on and off about how to achieve framerate-independence for variables changing over time. with little result. so i finally sat down and calculated it all out. here's how it goes, a quick tutorial about how to make your SSCs, DMs, Triangles and TexerIIs move with the same speed regardless of the fps [frames per second] AVS runs with:
+
+there's three different kinds of changing a variable's value over time that i use frequently. they are of the shape:
+
+    code:x = x+m;
+
+    //linear movement
+
+
+
+    y = y*s; // with 0 < s < 1 constant
+
+    // y aproaches zero, like e.g. decreasing the effect of a beat-responsive value after a beat.
+
+
+
+    z = z-(z-zd)*s;  ;-or-;  z = z*(1-s)+zd*s; // with 0 < s < 1 const.
+
+    // both are the same and can be used interchangeably! i use the first one in general.
+
+    // here, zd is the 'target value' which is approached after time.
+
+
+well looks good but these above depend on how fast your preset runs.
+so the first thing you need to know is how fast your preset actually runs. you can calculate that by using:
+
+    code:t = gettime(0); speed = t-old_t; old_t = t;
+
+
+this gives you the inverted fps*, here called "speed".
+
+i'll spare you the why's and how's and will just give you the equations. in the first one m is simply multiplied by 'speed' whereas in the other two cases you basically substitute s for a modified 'speed' value [which is the interesting part about this ].
+
+    code:t = gettime(0); speed = t-old_t; old_t = t;
+
+     //linear:
+
+    x = x+m*speed; // you'll need a bigger m now!
+
+
+
+     //approaching zero:
+
+    speed2 = pow(s,speed*dfps);
+
+    y = y*speed2;
+
+
+
+     //approaching target value [or 'interpolation']:
+
+    speed3 = 1-pow(1-s,speed*dfps);
+
+    z = z-(z-zd)*speed3;
+
+    //or
+
+    speed3 = pow(1-s,speed*dfps);
+
+    z = z*speed3+zd*(1-speed3);
+
+    (1 <- that is a ONE btw. not L)
+
+
+again s is a constant >0 and <1 which gives the speed of the change:
+low s -> faster motion.
+high s -> slower motion.
+dfps is the desired or simulated framerate set by you. it's a constant, maybe 20 to 50. do not use the actual calculated fps!
+
+have fun,
+grandchild
+_____________
+*)
+note that this will give you the raw, fluctuating fps, not the number shown in the editor or fullscreen. but this is usually sufficient to get a decent result. if you need something smoother, try the third equation from above [without fps-correction, mind you!]
+...and if you should need it: the fps is now calculated with 1/speed. 

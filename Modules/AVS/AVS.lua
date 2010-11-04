@@ -456,6 +456,33 @@ x=t+v*pow(sin(i*PI),0); y=i*2-1.0;
 				drawMode = 1
 				--next = 2
 			},	
+			[11] = {
+				name = "Spiral Graph",
+				init = [[
+n=10;t=0;
+]],
+				frame = [[
+t=t+0.1;				
+]],
+				beat = [[
+n=10+rand(8)
+]],
+				point = [[
+j = 0.001
+size = 0.5
+r=i*PI*128+t; 
+x=cos(r/j)*size+sin(r)*0.3; 
+y=sin(r/j)*size+cos(r)*0.3
+]],
+				width = 94,
+				height = 94,
+				pixel = 1,
+				drawLayer = "UIParent",
+				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
+				enabled = false,
+				drawMode = 1
+				--next = 2
+			},	
 			
 		},
 	}
