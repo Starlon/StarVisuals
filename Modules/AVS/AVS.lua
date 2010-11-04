@@ -52,7 +52,7 @@ local optionsDefaults = {
 		type = "execute",
 		func = function()
 			mod.db.profile.images = {}
-			StarTip:RebuildOpts()
+			StarVisuals:RebuildOpts()
 		end,
 		order = 7
 	},
@@ -483,6 +483,68 @@ y=sin(r/j)*size+cos(r)*0.3
 				drawMode = 1
 				--next = 2
 			},	
+			[12] = {
+				name = "Vibrating Worm",
+				init = [[
+n=w; dt=0.1; t=0; sc=1000;
+]],
+				frame = [[
+t=t+dt;
+dt=0.2*dt+0.001 + 2; 
+t=if2(above(t,PI*2),t-PI*2,t);
+]],
+				beat = [[
+dt=sc;sc=-sc;
+]],
+				point = [[
+x=cos(2*i+t)*0.9*(v*0.5+0.5); 
+y=sin(i*2+t)*0.9*(v*0.5+0.5);
+]],
+				width = 94,
+				height = 94,
+				pixel = 1,
+				drawLayer = "UIParent",
+				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
+				enabled = false,
+				drawMode = 1
+				--next = 2
+			},	
+			[13] = {
+				name = "Test",
+				init = [[
+n = 500 ; k = 0.0; l = 0.0; m = ( rand( 10 ) + 2 ) * .5; c = 0; f = 0
+]],
+				frame = [[
+a = (a or 0) + 0.002 ; k = k + 0.04 ; l = l + 0.03
+]],
+				beat = [[
+bb = (bb or 0) + 1;
+beatdiv = 16;
+n=if2(equal(bb%beatdiv,0),380 + rand(200),n);
+t=if2(equal(bb%beatdiv,0),0.0,t);
+a=if2(equal(bb%beatdiv,0),0.0,a);
+k=if2(equal(bb%beatdiv,0),0.0,k);
+l=if2(equal(bb%beatdiv,0),0.0,l);
+m=if2(equal(bb%beatdiv,0),(( rand( 100  ) + 2 ) * .1) + 2,m);
+]],
+				point = [[
+r=(i*3.14159*2)+(a * 3.1415);
+d=sin(r*m)*0.3;
+x=cos(k+r)*d*2;y=(  (sin(k-r)*d) + ( sin(l*(i-.5) ) ) ) * .7;
+do return end
+red=abs(x);
+green=abs(y);
+blue=d
+]],
+				width = 94,
+				height = 94,
+				pixel = 4,
+				drawLayer = "UIParent",
+				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
+				enabled = false,
+				drawMode = 0
+				--next = 2
+			},	
 			
 		},
 	}
@@ -609,10 +671,6 @@ function update()
 			local n = row * widget.width + col
 			local n2 = (widget.height - row - 1) * widget.width + col
 			local color = widget.buffer.buffer[n]
-			local test = widget.textures[n2]
-			if not test then
-				StarTip:Print(n, n2, "test")
-			end
 			widget.textures[n2]:SetVertexColor(PluginColor.Color2RGBA(color))
 		--end
 		end
