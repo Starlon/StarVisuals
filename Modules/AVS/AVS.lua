@@ -79,7 +79,7 @@ d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d; y=sin(r)*d
 ]],
 				width = 96,
 				height = 96,
-				pixel = 1,
+				pixel = 4,
 				drawLayer = "UIParent",
 				points = {{"CENTER", UIParent, "CENTER", 0, 300}},
 				enabled = true,
@@ -406,13 +406,14 @@ c=c+1;
 				name = "Starfield",
 				init = [[
 n = 64
+zo = 0
 ]],
 				frame = [[
 r1=1/7;r2=4/9;r3=5/3;
 zo=_G.GetTime()*.1;
 ]],
 				beat = [[
-zo = zo * 1.2
+--zo = zo * 1.2
 ]],
 				point = [[
 r1=r2*9333.2312311+r3*33222.93329; r1=r1-floor(r1);
