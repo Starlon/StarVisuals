@@ -81,7 +81,7 @@ d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d; y=sin(r)*d
 				height = 96,
 				pixel = 1,
 				drawLayer = "UIParent",
-				points = {{"CENTER", "UIParent", "CENTER", 0, 50}},
+				points = {{"CENTER", UIParent, "CENTER", 0, 300}},
 				enabled = true,
 				drawMode = 1
 				--next = 2
@@ -369,7 +369,7 @@ d=k1*v+i*tpi; x=x0+pow(cos(d),3)*kx; y=y0+pow(sin(d),3)*ky;
 				height = 24,
 				pixel = 4,
 				drawLayer = "UIParent",
-				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
+				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
 				enabled = false,
 				drawMode = 1
 				--next = 2
@@ -397,7 +397,7 @@ c=c+1;
 				height = 24,
 				pixel = 4,
 				drawLayer = "UIParent",
-				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
+				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
 				enabled = false,
 				drawMode = 1
 				--next = 2
@@ -412,6 +412,7 @@ r1=1/7;r2=4/9;r3=5/3;
 zo=_G.GetTime()*.1;
 ]],
 				beat = [[
+zo = zo * 1.2
 ]],
 				point = [[
 r1=r2*9333.2312311+r3*33222.93329; r1=r1-floor(r1);
@@ -429,6 +430,30 @@ red=(1-exp(-z1*z1)) * 255; green=red; blue=red;
 				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
 				enabled = false,
 				drawMode = 0
+				--next = 2
+			},	
+			[10] = {
+				name = "Vertical Scope",
+				init = [[
+n=50; t=0; tv=0.1;dt=1;
+tv=((random(50.0)/50.0))*dt; 
+]],
+				frame = [[
+t=t*0.9+tv*0.1
+]],
+				beat = [[
+tv=((random(50.0)/50.0))*dt; dt=-dt;
+]],
+				point = [[
+x=t+v*pow(sin(i*PI),0); y=i*2-1.0;
+]],
+				width = 94,
+				height = 94,
+				pixel = 1,
+				drawLayer = "UIParent",
+				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
+				enabled = false,
+				drawMode = 1
 				--next = 2
 			},	
 			
