@@ -76,11 +76,11 @@ t=t-5
 				beat = [[
 ]],
 				point = [[
-d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d; y=sin(r)*d
+d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d*.8; y=sin(r)*d*.8
 ]],
-				width = 96,
-				height = 96,
-				pixel = 4,
+				width = 88,
+				height = 88,
+				pixel = 1,
 				drawLayer = "UIParent",
 				points = {{"CENTER", UIParent, "CENTER", 0, 300}},
 				enabled = true,
@@ -245,28 +245,28 @@ blue=col ; red=col ; green=col
 				--next = 2
 			},	
 			[6] = {
-				name = "3D Scope Trick",
+				name = "Scope Trick",
 				init = [[
 pi=acos(-1); 
-sp=3; -- speed
-siz=.3; -- size
+sp=7; -- speed
+siz=.3 * 1.5; -- size
 vi=0; 
 sn=2;
-cn=3;
+cn=0.05;
 
 tx = 100
-ty = 10
-tz = 1
-tb = 1
+ty = 100
+tz = 50
+tb = 2
 u = 1
 count = 0
 ]],
 				frame = [[				
-n=sqrt(w*w+h*h)*pi*sn/5*siz*cn; 
+n=sqrt(w*w+h*h)*pi*sn/5*siz*cn*.5*v; 
 ex=(ex or 0)+tx*sp;
 ey=(ey or 0)+ty*sp;
 ez=(ez or 0)+tz*sp; 
-if vi == 0 then
+if vi == 0 or true then
 	kx=sin(ex)*pi/8
 	ky=sin(ey)*pi/8
 	kz=ez
@@ -277,51 +277,19 @@ else
 end
 sx=sin(kx);
 sy=sin(ky);
-sz=sin(kz); 
+sz=sin(kz) * v; 
 cx=cos(kx);
 cy=cos(ky);
 cz=cos(kz);
 ]],
 				beat = [[
-do return end
 mx=v
-my=v
-mz=v
-local sign = 1
-
-if mx ~= 0 then
-	if mx < 0 then
-		sign = -1
-	else
-		sign = 1
-	end
-end
-tx=(1-abs(mx))*sign;
-
-sign = 1
-if my ~= 0 then
-	if my < 0 then
-		sign = -1
-	else
-		sign = 1
-	end
-end
-ty=(1-abs(my))*sign;
-
-sign = 1
-if mz ~= 0 then
-	if mz < 0 then
-		sign = -1
-	else
-		sign = 1
-	end
-else
-	sign = 1
-end
-tz=(1-abs(mz))*sign;
+my=(random(100) - 50) / 50
+mz=(random(100) - 50) / 50
+tx=(1-abs(mx))*if2(mx,sign(mx),1);ty=(1-abs(my))*if2(my,sign(my),1);tz=(1-abs(mz))*if2(mz,sign(mz),1); 
 ]],
 				point = [[
-r=i*pi*2*sn;
+r=i*pi*3*sn;
 d=((i*sn)%sn+1)/sn*1.2;
 if tb == 2 then
 	u = 1-u
@@ -339,14 +307,14 @@ x3=x2*cz-y2*sz;
 y3=y2*cz+x2*sz; 
 x=x3/(1+z3/3);
 y=y3/(1+z3/3);
-cl=sqrt(2)/4*3-z3; 
+cl=sqrt(2)/4*2-z3; 
 red=cl*(sin(d/1.2*pi*2)/2+0.5);
 green=cl*(sin(d/1.2*pi*2+pi*2/3)/2+0.5);
 blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5);
 ]],
-				width = 64,
-				height = 64,
-				pixel = 1,
+				width = 50,
+				height = 50,
+				pixel = 2,
 				drawLayer = "UIParent",
 				points = {{"CENTER"}},
 				enabled = false,
