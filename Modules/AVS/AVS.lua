@@ -9,6 +9,7 @@ local LibTimer = LibStub("LibScriptableDisplayTimer-1.0")
 local PluginUtils = LibStub("LibScriptableDisplayPluginUtils-1.0"):New({})
 local AVSSuperScope = LibStub("LibScriptableDisplayAVSSuperScope-1.0")
 local PluginColor = LibStub("LibScriptableDisplayPluginColor-1.0"):New({})
+local PluginNoise, NoiseObj = LibStub("LibScriptableDisplayPluginNoise-1.0"):New({})
 local _G = _G
 local GameTooltip = _G.GameTooltip
 local StarVisuals = _G.StarVisuals
@@ -115,7 +116,7 @@ y = y + ( sin(t) * .005 );
 				pixel = 3,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 100}},
-				drawMode = 1,
+				drawMode = 0,
 				enabled = false
 			},
 			[3] = { 
@@ -251,9 +252,9 @@ sp=3; -- speed
 siz=.3; -- size
 vi=0; 
 sn=2;
-cn=1;
+cn=3;
 
-tx = 10
+tx = 100
 ty = 10
 tz = 1
 tb = 1
@@ -339,9 +340,9 @@ y3=y2*cz+x2*sz;
 x=x3/(1+z3/3);
 y=y3/(1+z3/3);
 cl=sqrt(2)/4*3-z3; 
-red=cl*(sin(d/1.2*pi*2)/2+0.5) * 255;
-green=cl*(sin(d/1.2*pi*2+pi*2/3)/2+0.5) * 255;
-blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5) * 255;
+red=cl*(sin(d/1.2*pi*2)/2+0.5);
+green=cl*(sin(d/1.2*pi*2+pi*2/3)/2+0.5);
+blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5);
 ]],
 				width = 64,
 				height = 64,
@@ -651,21 +652,21 @@ function mod:ResetImages()
 	self:CreateImages()
 end
 
+local MAXRECORDS = 32
+
 function update()
 	for i, widget in pairs(mod.images or {}) do
 		widget.buffer:Clear()
+		local visdata, isBeat, maxhit = PluginNoise.UnitNoise(widget.unit or "player")
+		
 		local fbout = {}
 		local total = 0
-		for i = 0, 1024 do
-			mod.visdata[i] = random(100) / 100
-			total = total + mod.visdata[i]
+		for i = 0, MAXRECORDS - 1 do
+			total = total + visdata.buffer[i]
 		end
-		local isBeat
-		if total * 100 / 1024 * 10 > 520 then
-			isBeat = true
-		end
+		StarTip:Print(isBeat)
 		--widget.framebuffer = widget.framebuffer or LibBuffer:New("framebuffer", widget.width * widget.height)
-		widget:Render(mod.visdata, isBeat, widget.framebuffer, fbout, widget.width, widget.height)
+		widget:Render(visdata.buffer, isBeat, widget.framebuffer, fbout, widget.width, widget.height)
 		for row = 0, widget.height - 1 do
 		for col = 0, widget.width - 1 do
 		--for n = 0, widget.height * widget.width - 1 do
