@@ -664,7 +664,6 @@ function update()
 		for i = 0, MAXRECORDS - 1 do
 			total = total + visdata.buffer[i]
 		end
-		StarTip:Print(isBeat)
 		--widget.framebuffer = widget.framebuffer or LibBuffer:New("framebuffer", widget.width * widget.height)
 		widget:Render(visdata.buffer, isBeat, widget.framebuffer, fbout, widget.width, widget.height)
 		for row = 0, widget.height - 1 do
