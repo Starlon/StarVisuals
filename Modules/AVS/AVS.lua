@@ -82,7 +82,7 @@ d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d*.8; y=sin(r)*d*.8
 				height = 88,
 				pixel = 1,
 				drawLayer = "UIParent",
-				points = {{"CENTER", UIParent, "CENTER", 0, 300}},
+				points = {{"CENTER", UIParent, "CENTER", 0, 250}},
 				enabled = true,
 				drawMode = 1
 				--next = 2
