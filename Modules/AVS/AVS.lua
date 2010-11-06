@@ -248,7 +248,7 @@ blue=col ; red=col ; green=col
 				name = "Scope Trick",
 				init = [[
 pi=acos(-1); 
-sp=7; -- speed
+sp=10; -- speed
 siz=.3 * 1.5; -- size
 vi=0; 
 sn=2;
