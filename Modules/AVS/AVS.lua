@@ -82,7 +82,7 @@ d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d*.8; y=sin(r)*d*.8
 				height = 88,
 				pixel = 1,
 				drawLayer = "UIParent",
-				points = {{"CENTER", UIParent, "CENTER", 0, 250}},
+				points = {{"CENTER", "UIParent", "CENTER", 0, 250}},
 				enabled = true,
 				drawMode = 1
 				--next = 2
@@ -158,6 +158,7 @@ x=x4/(1+z4/dst);y=y4/(1+z4/dst)
 			[4] = { 
 				name = "3D #2",
 				init = [[
+--if you can figure this out, more power to you
 n=12; r=.5;  --Just for this scope, which is a simple circle with a radius of 0.5 done in 7 steps.
 mx=0;my=0;mz=0; --Use these to move the center/base of your scope along the axes.
 dst=2; -- Normally you don't need to change this. It's the distance for the 3D/2D-Translation.
@@ -307,7 +308,7 @@ x3=x2*cz-y2*sz;
 y3=y2*cz+x2*sz; 
 x=x3/(1+z3/3);
 y=y3/(1+z3/3);
-cl=sqrt(2)/4*2-z3; 
+cl=sqrt(5)/4*2-z3; 
 red=cl*(sin(d/1.2*pi*2)/2+0.5);
 green=cl*(sin(d/1.2*pi*2+pi*2/3)/2+0.5);
 blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5);
@@ -322,25 +323,57 @@ blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5);
 				--next = 2
 			},				
 			[7] = {
-				name = "Simple Example",
+				name = "3d Fearn",
 				init = [[
-k0, k1, kx, ky, x0, y0 = 1, 1, 1, 1, 0, 0
-n=k0*600; tpi=2*acos(-1);
+n=1000; zs=sqrt(2); izs=5.893/2; iys=1.385/2
+zt = 50; yt = 25; xt = rand(100)
 ]],
 				frame = [[
+rx1=0; ry1=0; rz1=0; rx2=0; ry2=0; zt=zt+izt; yt=yt+iyt; xt=xt+ixt; cz=cos(zt); sz=sin(zt); cy=cos(yt); sy=sin(yt); cx=cos(xt); sx=sin(xt);
+red = 15 / 255; green = 63 / 255; blue = 31 / 255
+xt = xt + 10
 ]],
 				beat = [[
+local val = 20.05
+izt=rand(100)/1000-val; iyt=rand(100)/1000-val; ixt=rand(100)/1000-val;
 ]],
 				point = [[
-d=k1*v+i*tpi; x=x0+pow(cos(d),3)*kx; y=y0+pow(sin(d),3)*ky;
+random=rand(100);
+t1=if2(equal(random,0),0,t1);
+t1=if2(below(random,86)*above(random,0),1,t1);
+t1=if2(below(random,93)*above(random,86),2,t1);
+t1=if2(below(random,99)*above(random,92),3,t1);
+rx2=rx1; ry2=ry1;
+rx1=if2(equal(t1,0),0,rx1);
+ry1=if2(equal(t1,0),ry1*0.18,ry1);
+rz1=if2(equal(t1,0),0,rz1);
+rx2=rx1; ry2=ry1;
+rx1=if2(equal(t1,1),rx1*0.85,rx1);
+ry1=if2(equal(t1,1),ry1*0.85+rz1*0.1+1.6,ry1);
+rz1=if2(equal(t1,1),ry2*-0.1+rz1*0.85,rz1);
+rx2=rx1; ry2=ry1;
+rx1=if2(equal(t1,2),rx1*0.2+ry1*-0.2,rx1);
+ry1=if2(equal(t1,2),rx2*0.2+ry1*0.2+0.8,ry1);
+rz1=if2(equal(t1,2),rz1*0.3,rz1);
+rx2=rx1; ry2=ry1;
+rx1=if2(equal(t1,3),rx1*-0.2+ry1*0.2,rx1);
+ry1=if2(equal(t1,3),rx2*0.2+ry1*0.2+0.8,ry1);
+rz1=if2(equal(t1,3),rz1*0.3,rz1);
+x1=rx1; y1=ry1; z1=rz1;
+x2=x1*cz+y1*sz; y2=x1*sz-y1*cz;
+x3=x2*cy+z1*sy; z2=x2*sy-z1*cy;
+y3=y2*cx+z2*sx; z3=y2*sx-z2*cx+10;
+x=x3/z3; y=y3/z3;
+x = x / 1.5; y = y / 1.5;
 ]],
-				width = 24,
-				height = 24,
-				pixel = 4,
+				width = 94,
+				height = 94,
+				pixel = 2,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
-				enabled = false,
-				drawMode = 1
+				enabled = true,
+				drawMode = 0,
+				line_blend_mode=2
 				--next = 2
 			},	
 			[8] = {
@@ -416,6 +449,7 @@ tv=((random(50.0)/50.0))*dt; dt=-dt;
 ]],
 				point = [[
 x=t+v*pow(sin(i*PI),0); y=i*2-1.0;
+x = x - .6
 ]],
 				width = 94,
 				height = 94,
@@ -423,7 +457,8 @@ x=t+v*pow(sin(i*PI),0); y=i*2-1.0;
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
 				enabled = false,
-				drawMode = 1
+				drawMode = 1,
+				unit = "random"
 				--next = 2
 			},	
 			[11] = {
@@ -477,42 +512,6 @@ y=sin(i*2+t)*0.9*(v*0.5+0.5);
 				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
 				enabled = false,
 				drawMode = 1
-				--next = 2
-			},	
-			[13] = {
-				name = "Test",
-				init = [[
-n = 500 ; k = 0.0; l = 0.0; m = ( rand( 10 ) + 2 ) * .5; c = 0; f = 0
-]],
-				frame = [[
-a = (a or 0) + 0.002 ; k = k + 0.04 ; l = l + 0.03
-]],
-				beat = [[
-bb = (bb or 0) + 1;
-beatdiv = 16;
-n=if2(equal(bb%beatdiv,0),380 + rand(200),n);
-t=if2(equal(bb%beatdiv,0),0.0,t);
-a=if2(equal(bb%beatdiv,0),0.0,a);
-k=if2(equal(bb%beatdiv,0),0.0,k);
-l=if2(equal(bb%beatdiv,0),0.0,l);
-m=if2(equal(bb%beatdiv,0),(( rand( 100  ) + 2 ) * .1) + 2,m);
-]],
-				point = [[
-r=(i*3.14159*2)+(a * 3.1415);
-d=sin(r*m)*0.3;
-x=cos(k+r)*d*2;y=(  (sin(k-r)*d) + ( sin(l*(i-.5) ) ) ) * .7;
-do return end
-red=abs(x);
-green=abs(y);
-blue=d
-]],
-				width = 94,
-				height = 94,
-				pixel = 4,
-				drawLayer = "UIParent",
-				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
-				enabled = false,
-				drawMode = 0
 				--next = 2
 			},	
 			
@@ -625,13 +624,17 @@ local MAXRECORDS = 32
 function update()
 	for i, widget in pairs(mod.images or {}) do
 		widget.buffer:Clear()
-		local visdata, isBeat, maxhit = PluginNoise.UnitNoise(widget.unit or "player")
+		local visdata, isBeat = PluginNoise.UnitNoise(widget.unit or "player")
 		
 		local fbout = {}
 		local total = 0
 		for i = 0, MAXRECORDS - 1 do
 			total = total + visdata.buffer[i]
 		end
+		
+		local n = total * 100
+		if n > 80 then isBeat = true end
+		isBeat = 1
 		--widget.framebuffer = widget.framebuffer or LibBuffer:New("framebuffer", widget.width * widget.height)
 		widget:Render(visdata.buffer, isBeat, widget.framebuffer, fbout, widget.width, widget.height)
 		for row = 0, widget.height - 1 do
@@ -661,6 +664,7 @@ function mod:RebuildOpts()
 		options[k] = v
 	end
 	for i, db in ipairs(self.db.profile.images) do
+		StarTip:Print(i)
 		options[db.name:gsub(" ", "_")] = {
 			name = db.name,
 			type="group",
