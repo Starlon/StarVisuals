@@ -371,7 +371,7 @@ x = x / 1.5; y = y / 1.5;
 				pixel = 2,
 				drawLayer = "UIParent",
 				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
-				enabled = true,
+				enabled = false,
 				drawMode = 0,
 				line_blend_mode=2
 				--next = 2
@@ -625,16 +625,16 @@ function update()
 	for i, widget in pairs(mod.images or {}) do
 		widget.buffer:Clear()
 		local visdata, isBeat = PluginNoise.UnitNoise(widget.unit or "player")
-		
+
+
 		local fbout = {}
 		local total = 0
 		for i = 0, MAXRECORDS - 1 do
 			total = total + visdata.buffer[i]
 		end
 		
-		local n = total * 100
-		if n > 80 then isBeat = true end
-		isBeat = 1
+		if total > .8 then isBeat = true end
+		
 		--widget.framebuffer = widget.framebuffer or LibBuffer:New("framebuffer", widget.width * widget.height)
 		widget:Render(visdata.buffer, isBeat, widget.framebuffer, fbout, widget.width, widget.height)
 		for row = 0, widget.height - 1 do
