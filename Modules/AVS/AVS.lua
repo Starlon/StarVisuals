@@ -664,7 +664,6 @@ function mod:RebuildOpts()
 		options[k] = v
 	end
 	for i, db in ipairs(self.db.profile.images) do
-		StarTip:Print(i)
 		options[db.name:gsub(" ", "_")] = {
 			name = db.name,
 			type="group",
