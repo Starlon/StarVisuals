@@ -254,7 +254,7 @@ sp=10; -- speed
 siz=.5; -- size
 vi=0; 
 sn=10
-tb = 1
+tb = 2
 
 cn=0.05;
 tx = 100
@@ -294,7 +294,8 @@ cl=sqrt(2)/4*3-z3; red=cl*(sin(d/1.2*pi*2)/2+0.5);green=cl*(sin(d/1.2*pi*2+pi*2/
 				drawLayer = "UIParent",
 				points = {{"CENTER"}},
 				enabled = false,
-				drawMode = 0
+				drawMode = 0,
+				line_blend_mode = 3
 				--next = 2
 			},				
 			[7] = {
