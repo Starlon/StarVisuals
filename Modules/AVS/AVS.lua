@@ -68,7 +68,7 @@ local defaults = {
 			[1] = {
 				name = "Spiral",
 				init = [[
-n=64
+n=32
 ]],
 				frame = [[
 t=t-5
@@ -82,9 +82,10 @@ d=i+v*0.2; r=t+i*PI*200; x=cos(r)*d*.8; y=sin(r)*d*.8
 				height = 88,
 				pixel = 1,
 				drawLayer = "UIParent",
-				points = {{"CENTER", "UIParent", "CENTER", 0, 250}},
+				points = {{"CENTER", "UIParent", "CENTER", 0, 255}},
 				enabled = true,
-				drawMode = 1
+				drawMode = 1,
+				unit = "local"
 				--next = 2
 			},
 			[2] = {
@@ -151,7 +152,7 @@ x=x4/(1+z4/dst);y=y4/(1+z4/dst)
 				height = 32,
 				pixel = 4,
 				drawLayer = "UIParent",
-				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
+				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
 				enabled = false,
 				drawMode = 1
 			},
@@ -218,7 +219,7 @@ x=x4/(1+z4/dst);y=y4/(1+z4/dst); --3D/2D-Translation
 				height = 32,
 				pixel = 4,
 				drawLayer = "UIParent",
-				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
+				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
 				enabled = false,
 				drawMode = 1
 			},
@@ -241,7 +242,7 @@ blue=col ; red=col ; green=col
 				height = 24,
 				pixel = 4,
 				drawLayer = "UIParent",
-				points = {{"CENTER", "UIParent", "CENTER", 0, -300}},
+				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
 				enabled = false,
 				--next = 2
 			},	
@@ -250,35 +251,27 @@ blue=col ; red=col ; green=col
 				init = [[
 pi=acos(-1); 
 sp=10; -- speed
-siz=.3 * 1.5; -- size
+siz=.5; -- size
 vi=0; 
-sn=2;
-cn=0.05;
+sn=10
+tb = 1
 
+cn=0.05;
 tx = 100
 ty = 100
 tz = 50
-tb = 2
 u = 1
 count = 0
 ]],
 				frame = [[				
-n=sqrt(w*w+h*h)*pi*sn/5*siz*cn*.5*v; 
-ex=(ex or 0)+tx*sp;
-ey=(ey or 0)+ty*sp;
-ez=(ez or 0)+tz*sp; 
-if vi == 0 or true then
-	kx=sin(ex)*pi/8
-	ky=sin(ey)*pi/8
-	kz=ez
-else
-    kx=-pi/2+sin(ex)*pi/8;
-    ky=ey;
-    kz=sin(ez)*pi/8; 
-end
+n=sqrt(w*w+h*h)*pi*sn*siz/8*(1+equal(tb,2)); 
+ex=(ex or 0)+tx*sp;ey=(ey or 0)+ty*sp;ez=(ez or 0)+tz*sp; 
+kx=if2(vi,sin(ex)*pi/8,-pi/2+sin(ex)*pi/8);
+ky=if2(vi,sin(ey)*pi/8,ey);
+kz=if2(vi,ez,sin(ez)*pi/8); 
 sx=sin(kx);
 sy=sin(ky);
-sz=sin(kz) * v; 
+sz=sin(kz); 
 cx=cos(kx);
 cy=cos(ky);
 cz=cos(kz);
@@ -290,36 +283,18 @@ mz=(random(100) - 50) / 50
 tx=(1-abs(mx))*if2(mx,sign(mx),1);ty=(1-abs(my))*if2(my,sign(my),1);tz=(1-abs(mz))*if2(mz,sign(mz),1); 
 ]],
 				point = [[
-r=i*pi*3*sn;
-d=((i*sn)%sn+1)/sn*1.2;
-if tb == 2 then
-	u = 1-u
-else
-	u = tb
-end
-x1=sin(r)*d*siz;
-y1=cos(r)*d*siz;
-z1=(1-v)*siz*(u*2-1);
-y2=y1*cx-z1*sx;
-z2=y1*sx+z1*cx; 
-x2=z2*sy+x1*cy;
-z3=z2*cy-x1*sy; 
-x3=x2*cz-y2*sz;
-y3=y2*cz+x2*sz; 
-x=x3/(1+z3/3);
-y=y3/(1+z3/3);
-cl=sqrt(5)/4*2-z3; 
-red=cl*(sin(d/1.2*pi*2)/2+0.5);
-green=cl*(sin(d/1.2*pi*2+pi*2/3)/2+0.5);
-blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5);
+r=i*pi*2*sn;d=((i*sn)%sn+1)/sn*1.2;u=if2(equal(tb,2),1-u,tb);
+x1=sin(r)*d*siz;y1=cos(r)*d*siz;z1=(1-v)*siz*(u*2-1);
+y2=y1*cx-z1*sx;z2=y1*sx+z1*cx; x2=z2*sy+x1*cy;z3=z2*cy-x1*sy; x3=x2*cz-y2*sz;y3=y2*cz+x2*sz; x=x3/(1+z3/3);y=y3/(1+z3/3);
+cl=sqrt(2)/4*3-z3; red=cl*(sin(d/1.2*pi*2)/2+0.5);green=cl*(sin(d/1.2*pi*2+pi*2/3)/2+0.5);blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5);
 ]],
-				width = 50,
-				height = 50,
-				pixel = 2,
+				width = 94,
+				height = 84,
+				pixel = 3,
 				drawLayer = "UIParent",
 				points = {{"CENTER"}},
 				enabled = false,
-				drawMode = 1
+				drawMode = 0
 				--next = 2
 			},				
 			[7] = {
@@ -438,7 +413,7 @@ red=(1-exp(-z1*z1)) * 255; green=red; blue=red;
 			[10] = {
 				name = "Vertical Scope",
 				init = [[
-n=50; t=0; tv=0.1;dt=1;
+n=32; t=0; tv=0.1;dt=1;
 tv=((random(50.0)/50.0))*dt; 
 ]],
 				frame = [[
@@ -455,10 +430,10 @@ x = x - .6
 				height = 94,
 				pixel = 1,
 				drawLayer = "UIParent",
-				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
+				points = {{"CENTER", "UIParent", "CENTER", 0, 255}},
 				enabled = false,
 				drawMode = 1,
-				unit = "random"
+				unit = "local"
 				--next = 2
 			},	
 			[11] = {
@@ -624,16 +599,10 @@ local MAXRECORDS = 32
 function update()
 	for i, widget in pairs(mod.images or {}) do
 		widget.buffer:Clear()
-		local visdata, isBeat = PluginNoise.UnitNoise(widget.unit or "player")
-
+		local visdata, isBeat = PluginNoise.UnitNoise(widget.config.unit or "local")
 
 		local fbout = {}
 		local total = 0
-		for i = 0, MAXRECORDS - 1 do
-			total = total + visdata.buffer[i]
-		end
-		
-		if total > .8 then isBeat = true end
 		
 		--widget.framebuffer = widget.framebuffer or LibBuffer:New("framebuffer", widget.width * widget.height)
 		widget:Render(visdata.buffer, isBeat, widget.framebuffer, fbout, widget.width, widget.height)
