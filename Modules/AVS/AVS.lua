@@ -565,7 +565,7 @@ function mod:OnEnable()
 	StarVisuals:SetOptionsDisabled(options, false)
 	createImages()
 	self.timer:Start()
-	
+	PluginNoise.StartNoise()
 end
 
 function mod:OnDisable()
@@ -575,6 +575,7 @@ function mod:OnDisable()
 		image.canvas:Hide()
 	end
 	wipe(self.images)
+	PluginNoise.StopNoise()
 end
 
 function mod:CreateImages()
