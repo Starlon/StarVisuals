@@ -120,10 +120,10 @@ y = y + ( sin(t) * .005 );
 				drawMode = 0,
 				enabled = false
 			},
-			[3] = { 
+			[3] = {
 				name = "3D",
 				init = [[
--- this doesn't seem to work. Maybe someone else will have better luck. There's a file in StarVisual's top folder that explains this.				
+-- this doesn't seem to work. Maybe someone else will have better luck. There's a file in StarVisual's top folder that explains this.
 n=7; r=5
 mx=0;my=0;mz=0
 dst=10
@@ -156,16 +156,16 @@ x=x4/(1+z4/dst);y=y4/(1+z4/dst)
 				enabled = false,
 				drawMode = 1
 			},
-			[4] = { 
+			[4] = {
 				name = "3D #2",
 				init = [[
 --if you can figure this out, more power to you
 n=12; r=.5;  --Just for this scope, which is a simple circle with a radius of 0.5 done in 7 steps.
 mx=0;my=0;mz=0; --Use these to move the center/base of your scope along the axes.
 dst=2; -- Normally you don't need to change this. It's the distance for the 3D/2D-Translation.
---IMPORTANT: If you create, rotate or move a scope its z-values must not become lower 
---than -dst => !!! z >= -dst for all z !!! 
-  
+--IMPORTANT: If you create, rotate or move a scope its z-values must not become lower
+--than -dst => !!! z >= -dst for all z !!!
+
 rx=0;ry=0;rz=0; --Initrotation around x,y and z-axis in degrees.
 
 rdx=1;rdy=1;rdz=1; -- Permanent rotation around axes in degrees/frame. Set these to zero to stop rotation.
@@ -185,16 +185,16 @@ xs=sin(rx/p3);ys=sin(ry/p3);zs=sin(rz/p3);xc=cos(rx/p3);yc=cos(ry/p3);zc=cos(rz/
 
 ]],
 				beat = [[
--- Setup the beat reaction of your scope. For example change the rotation speed by random like this:				
-rdx=random(3)+1;rdy=random(3)+1;rdz=random(3)+1				
+-- Setup the beat reaction of your scope. For example change the rotation speed by random like this:
+rdx=random(3)+1;rdy=random(3)+1;rdz=random(3)+1
 ]],
 				point = [[
 d=i+v*0.2; r=t+i*PI*200; x1=cos(r)*d; y1=sin(r)*d; z1 = 0
 
---This is the 3D-Scope. Add your own scopes here by setting x1,y1 and z1. 
+--This is the 3D-Scope. Add your own scopes here by setting x1,y1 and z1.
 --(Do not use x and y. They are generated in this section)
 
---(In fact the example is not really 3D because of y1=0, but as you see,it can be nicely rotated anyway) 
+--(In fact the example is not really 3D because of y1=0, but as you see,it can be nicely rotated anyway)
 
 --IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 --The length of input in all of the sections is limited. So keep your scope as
@@ -245,14 +245,14 @@ blue=col ; red=col ; green=col
 				points = {{"CENTER", "UIParent", "CENTER", 0, 0}},
 				enabled = false,
 				--next = 2
-			},	
+			},
 			[6] = {
 				name = "Scope Trick",
 				init = [[
-pi=acos(-1); 
+pi=acos(-1);
 sp=10; -- speed
 siz=.5; -- size
-vi=0; 
+vi=0;
 sn=10
 tb = 2
 
@@ -263,15 +263,15 @@ tz = 50
 u = 1
 count = 0
 ]],
-				frame = [[				
-n=sqrt(w*w+h*h)*pi*sn*siz/8*(1+equal(tb,2)); 
-ex=(ex or 0)+tx*sp;ey=(ey or 0)+ty*sp;ez=(ez or 0)+tz*sp; 
+				frame = [[
+n=sqrt(w*w+h*h)*pi*sn*siz/8*(1+equal(tb,2));
+ex=(ex or 0)+tx*sp;ey=(ey or 0)+ty*sp;ez=(ez or 0)+tz*sp;
 kx=if2(vi,sin(ex)*pi/8,-pi/2+sin(ex)*pi/8);
 ky=if2(vi,sin(ey)*pi/8,ey);
-kz=if2(vi,ez,sin(ez)*pi/8); 
+kz=if2(vi,ez,sin(ez)*pi/8);
 sx=sin(kx);
 sy=sin(ky);
-sz=sin(kz); 
+sz=sin(kz);
 cx=cos(kx);
 cy=cos(ky);
 cz=cos(kz);
@@ -280,7 +280,7 @@ cz=cos(kz);
 mx=v
 my=(random(100) - 50) / 50
 mz=(random(100) - 50) / 50
-tx=(1-abs(mx))*if2(mx,sign(mx),1);ty=(1-abs(my))*if2(my,sign(my),1);tz=(1-abs(mz))*if2(mz,sign(mz),1); 
+tx=(1-abs(mx))*if2(mx,sign(mx),1);ty=(1-abs(my))*if2(my,sign(my),1);tz=(1-abs(mz))*if2(mz,sign(mz),1);
 ]],
 				point = [[
 r=i*pi*2*sn;d=((i*sn)%sn+1)/sn*1.2;u=if2(equal(tb,2),1-u,tb);
@@ -297,7 +297,7 @@ cl=sqrt(2)/4*3-z3; red=cl*(sin(d/1.2*pi*2)/2+0.5);green=cl*(sin(d/1.2*pi*2+pi*2/
 				drawMode = 0,
 				line_blend_mode = 3
 				--next = 2
-			},				
+			},
 			[7] = {
 				name = "3d Fearn",
 				init = [[
@@ -351,7 +351,7 @@ x = x / 1.5; y = y / 1.5;
 				drawMode = 0,
 				line_blend_mode=2
 				--next = 2
-			},	
+			},
 			[8] = {
 				name = "Z",
 				init = [[
@@ -369,7 +369,7 @@ c=0;
 				point = [[
 x=if2(c%2,rlw,-rlw);
 y=if2(above(c,1),rlh,-rlh);
-c=c+1; 
+c=c+1;
 ]],
 				width = 24,
 				height = 24,
@@ -379,7 +379,7 @@ c=c+1;
 				enabled = false,
 				drawMode = 1
 				--next = 2
-			},	
+			},
 			[9] = {
 				name = "Starfield",
 				init = [[
@@ -410,12 +410,12 @@ red=(1-exp(-z1*z1)) * 255; green=red; blue=red;
 				enabled = false,
 				drawMode = 0
 				--next = 2
-			},	
+			},
 			[10] = {
 				name = "Vertical Scope",
 				init = [[
 n=32; t=0; tv=0.1;dt=1;
-tv=((random(50.0)/50.0))*dt; 
+tv=((random(50.0)/50.0))*dt;
 ]],
 				frame = [[
 t=t*0.9+tv*0.1
@@ -436,14 +436,14 @@ x = x - .6
 				drawMode = 1,
 				unit = "local"
 				--next = 2
-			},	
+			},
 			[11] = {
 				name = "Spiral Graph",
 				init = [[
 n=10;t=0;
 ]],
 				frame = [[
-t=t+0.1;				
+t=t+0.1;
 ]],
 				beat = [[
 n=10+rand(8)
@@ -451,8 +451,8 @@ n=10+rand(8)
 				point = [[
 j = 0.001
 size = 0.5
-r=i*PI*128+t; 
-x=cos(r/j)*size+sin(r)*0.3; 
+r=i*PI*128+t;
+x=cos(r/j)*size+sin(r)*0.3;
 y=sin(r/j)*size+cos(r)*0.3
 ]],
 				width = 94,
@@ -463,7 +463,7 @@ y=sin(r/j)*size+cos(r)*0.3
 				enabled = false,
 				drawMode = 1
 				--next = 2
-			},	
+			},
 			[12] = {
 				name = "Vibrating Worm",
 				init = [[
@@ -471,14 +471,14 @@ n=w; dt=0.1; t=0; sc=1000;
 ]],
 				frame = [[
 t=t+dt;
-dt=0.2*dt+0.001 + 2; 
+dt=0.2*dt+0.001 + 2;
 t=if2(above(t,PI*2),t-PI*2,t);
 ]],
 				beat = [[
 dt=sc;sc=-sc;
 ]],
 				point = [[
-x=cos(2*i+t)*0.9*(v*0.5+0.5); 
+x=cos(2*i+t)*0.9*(v*0.5+0.5);
 y=sin(i*2+t)*0.9*(v*0.5+0.5);
 ]],
 				width = 94,
@@ -489,8 +489,8 @@ y=sin(i*2+t)*0.9*(v*0.5+0.5);
 				enabled = false,
 				drawMode = 1
 				--next = 2
-			},	
-			
+			},
+
 		},
 	}
 }
@@ -501,7 +501,7 @@ function mod:OnInitialize()
 
 	self.timer = LibTimer:New("Images", self.db.profile.update, true, update)
 	self.images = {}
-	
+
 	self.core = LibCore:New(self, environment, "StarVisuals.AVS", {}, nil, errorLevel)
 end
 
@@ -605,7 +605,7 @@ function update()
 
 		local fbout = {}
 		local total = 0
-		
+
 		--widget.framebuffer = widget.framebuffer or LibBuffer:New("framebuffer", widget.width * widget.height)
 		widget:Render(visdata.buffer, isBeat, widget.framebuffer, fbout, widget.width, widget.height)
 		for row = 0, widget.height - 1 do
