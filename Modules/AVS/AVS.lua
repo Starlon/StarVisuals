@@ -601,7 +601,7 @@ local MAXRECORDS = 32
 function update()
 	for i, widget in pairs(mod.images or {}) do
 		widget.buffer:Clear()
-		local visdata, isBeat = PluginNoise.UnitNoise(widget.config.unit or "local")
+		local visdata, isBeat = PluginNoise.UnitNoise(widget.config.unit or AVSSuperScope.defaults.unit)
 
 		local fbout = {}
 		local total = 0
