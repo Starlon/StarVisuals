@@ -3,13 +3,13 @@ mod.name = "AVS"
 mod.desc = "Enabling and disabling this module or its images will require a UI reload due to a bug."
 mod.toggled = true
 mod.defaultOff = false
-local LibBuffer = LibStub("LibScriptableDisplayBuffer-1.0")
-local LibCore = LibStub("LibScriptableDisplayCoreLite-1.0")
-local LibTimer = LibStub("LibScriptableDisplayTimer-1.0")
-local PluginUtils = LibStub("LibScriptableDisplayPluginUtils-1.0"):New({})
-local AVSSuperScope = LibStub("LibScriptableDisplayAVSSuperScope-1.0")
-local PluginColor = LibStub("LibScriptableDisplayPluginColor-1.0"):New({})
-local PluginNoise, NoiseObj = LibStub("LibScriptableDisplayPluginNoise-1.0"):New({})
+local LibBuffer = LibStub("LibScriptableUtilsBuffer-1.0")
+local LibCore = LibStub("LibScriptableLCDCoreLite-1.0")
+local LibTimer = LibStub("LibScriptableUtilsTimer-1.0")
+local PluginUtils = LibStub("LibScriptablePluginUtils-1.0"):New({})
+local AVSSuperScope = LibStub("LibScriptableImagesAVSSuperScope-1.0")
+local PluginColor = LibStub("LibScriptablePluginColor-1.0"):New({})
+local PluginNoise, NoiseObj = LibStub("LibScriptablePluginNoise-1.0"):New({})
 local _G = _G
 local GameTooltip = _G.GameTooltip
 local StarVisuals = _G.StarVisuals
@@ -490,7 +490,58 @@ y=sin(i*2+t)*0.9*(v*0.5+0.5);
 				drawMode = 1
 				--next = 2
 			},
+			[13] = {
+				name = "Scope Blur",
+				init = [[
+pi=acos(-1);
+sp=10; -- speed
+siz=1; -- size
+vi=5;
+sn=1000000
+tb = 1
 
+cn=0.5;
+tx = 100
+ty = 0
+tz = 0
+u = 1
+count = 0
+]],
+				frame = [[
+n=sqrt(w*w+h*h)*pi*sn*siz/6*(1+equal(tb,2)) + 500;
+ex=(ex or 0)+tx*sp;ey=(ey or 0)+ty*sp;ez=(ez or 0)+tz*sp;
+kx=if2(vi,sin(ex)*pi/8,-pi/2+sin(ex)*pi/8);
+ky=if2(vi,sin(ey)*pi/8,ey);
+kz=if2(vi,ez,sin(ez)*pi/8);
+sx=sin(kx);
+sy=sin(ky);
+sz=sin(kz);
+cx=cos(kx);
+cy=cos(ky);
+cz=cos(kz);
+]],
+				beat = [[
+mx=v
+my=(random(100) - 50) / 50
+mz=(random(100) - 50) / 50
+tx=(1-abs(mx))*if2(mx,sign(mx),1);ty=(1-abs(my))*if2(my,sign(my),1);tz=(1-abs(mz))*if2(mz,sign(mz),1);
+]],
+				point = [[
+r=i*pi*2*sn;d=((i*sn)%sn+1)/sn*1.2;u=if2(equal(tb,2),1-u,tb);
+x1=sin(r)*d*siz;y1=cos(r)*d*siz;z1=(1-v)*siz*(u*2-1);
+y2=y1*cx-z1*sx;z2=y1*sx+z1*cx; x2=z2*sy+x1*cy;z3=z2*cy-x1*sy; x3=x2*cz-y2*sz;y3=y2*cz+x2*sz; x=x3/(1+z3/3);y=y3/(1+z3/3);
+cl=sqrt(2)/4*3-z3; red=cl*(sin(d/1.2*pi*2)/2+0.5);green=cl*(sin(d/1.2*pi*2+pi*2/3)/2+0.5);blue=cl*(sin(d/1.2*pi*2+pi*4/3)/2+0.5);
+]],
+				width = 94,
+				height = 84,
+				pixel = 3,
+				drawLayer = "UIParent",
+				points = {{"CENTER"}},
+				enabled = false,
+				drawMode = 0,
+				line_blend_mode = 4
+				--next = 2
+			},			
 		},
 	}
 }
@@ -502,7 +553,7 @@ function mod:OnInitialize()
 	self.timer = LibTimer:New("Images", self.db.profile.update, true, update)
 	self.images = {}
 
-	self.core = LibCore:New(self, environment, "StarVisuals.AVS", {}, nil, errorLevel)
+	self.core = LibCore:New(environment, "StarVisuals.AVS", errorLevel)
 end
 
 local function copy(tbl)

@@ -22,6 +22,6 @@
 
 <Script file = "Libs\LibTransition-1.0\LibTransition-1.0.lua"/>
 
-<Include file = "Libs\LibScriptableDisplay-1.0\LibScriptableDisplay-1.0.xml"/>
+<Include file = "Libs\LibScriptable-1.0\LibScriptable-1.0.xml"/>
 
 </Ui>

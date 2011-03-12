@@ -3,7 +3,7 @@
 ## Notes: Visualizations from outerspace
 ## Author: Starlon
 ## Version: @project-version@
-## OptionalDeps: Ace3, LibScriptableDisplay-1.0, StarTip
+## OptionalDeps: Ace3, LibScriptable-1.0, StarTip
 ## SavedVariables: StarVisualsDB
 
 Libs\LibStub\LibStub.lua

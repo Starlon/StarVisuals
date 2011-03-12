@@ -7,10 +7,10 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("StarVisuals")
 StarVisuals.L = L
 
-local LibCore = LibStub("LibScriptableDisplayCore-1.0")
-local LibTimer = LibStub("LibScriptableDisplayTimer-1.0")
-local PluginTalents = LibStub("LibScriptableDisplayPluginTalents-1.0")
-local WidgetTimer = LibStub("LibScriptableDisplayWidgetTimer-1.0")
+local LibCore = LibStub("LibScriptableLCDCore-1.0")
+local LibTimer = LibStub("LibScriptableUtilsTimer-1.0")
+local PluginTalents = LibStub("LibScriptablePluginTalents-1.0")
+local WidgetTimer = LibStub("LibScriptableWidgetTimer-1.0")
 
 local _G = _G
 local GameTooltip = _G.GameTooltip
@@ -112,7 +112,7 @@ local options = {
 					name = L["Error Level"],
 					desc = L["StarVisuals's error level"],
 					type = "select",
-					values = LibStub("LibScriptableDisplayError-1.0").defaultTexts,
+					values = LibStub("LibScriptableUtilsError-1.0").defaultTexts,
 					get = function() return StarVisuals.db.profile.errorLevel end,
 					set = function(info, v) StarVisuals.db.profile.errorLevel = v; StarVisuals:Print("Note that changing error verbosity requires a UI reload.") end,
 					order = 11
@@ -199,7 +199,7 @@ function StarVisuals:OnEnable()
 	end
 	
 	local plugin = {}
-	LibStub("LibScriptableDisplayPluginColor-1.0"):New(plugin)
+	LibStub("LibScriptablePluginColor-1.0"):New(plugin)
 	ChatFrame1:AddMessage(plugin.Colorize(L["Welcome to "] .. StarVisuals.name, 0, 1, 1) .. plugin.Colorize(L[" Type /starvisuals to open config. Alternatively you could press escape and choose the addons menu. Or you can choose to show a minimap icon."], 1, 1, 0))
 end
 
